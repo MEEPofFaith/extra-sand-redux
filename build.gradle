@@ -3,19 +3,19 @@ apply plugin: "java"
 version '1.0'
 
 targetCompatibility = 8
-sourceCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
 
 sourceSets.main.java.srcDirs = ["src"]
 
 repositories{
     mavenCentral()
+    maven{ url "https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository" }
     maven{ url 'https://www.jitpack.io' }
 }
 
 ext{
-    //the build number that this mod is made for
-    mindustryVersion = 'v145'
-    jabelVersion = "93fde537c7"
+    mindustryVersion = 'v145.1'
+    jabelVersion = "0.7.0"
     sdkRoot = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
 }
 
@@ -27,19 +27,11 @@ allprojects{
 }
 
 dependencies{
+    //Release
     compileOnly "com.github.Anuken.Arc:arc-core:$mindustryVersion"
-    compileOnly "com.github.Anuken.MindustryJitpack:core:$mindustryVersion"
+    compileOnly "com.github.anuken.mindustry:core:$mindustryVersion"
 
     annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
-}
-
-//force arc version
-configurations.all{
-    resolutionStrategy.eachDependency { details ->
-        if(details.requested.group == 'com.github.Anuken.Arc'){
-            details.useVersion "$mindustryVersion"
-        }
-    }
 }
 
 task jarAndroid{
@@ -91,3 +83,17 @@ task deploy(type: Jar){
         }
     }
 }
+
+task moveDesktop doFirst{
+    exec{
+        workingDir "$buildDir"
+        if(System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")){
+            println "Yeeting the mod jar to the shadow realm..."
+            commandLine("cmd", "/C", "move", "/Y", "libs\\${project.archivesBaseName}Desktop.jar", "%userprofile%\\AppData\\Roaming\\Mindustry\\mods")
+        }else{
+            println "This task was made only for Windows. If you are a mac user, please PR the proper command to yeet the mod jar into the mods folder."
+        }
+    }
+}
+
+task jarMove dependsOn "jar", "moveDesktop"
