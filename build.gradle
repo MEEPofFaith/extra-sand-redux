@@ -44,9 +44,9 @@ entityAnno{
     modName = 'extra-sand-redux'
     mindustryVersion = project['mindustryVersion']
     revisionDir = file("$rootDir/revisions/")
-    fetchPackage = 'extrasand.fetched'
-    genSrcPackage = 'extrasand.entities.comp'
-    genPackage = 'extrasand.gen.entities'
+    fetchPackage = 'extrasandredux.fetched'
+    genSrcPackage = 'extrasandredux.entities.comp'
+    genPackage = 'extrasandredux.gen.entities'
 }
 
 task jarAndroid{

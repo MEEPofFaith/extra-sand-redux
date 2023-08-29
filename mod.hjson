@@ -7,7 +7,7 @@ name: "extra-sand-redux"
 author: "MEEP of Faith"
 
 #the fully qualified main class of the mod
-main: "extrasand.ExtraSand"
+main: "extrasandredux.ExtraSandRedux"
 
 #the mod description as seen in the mod dialog
 description: "A plethora of sandbox-only blocks dedicated to both fun and testing purposes."
