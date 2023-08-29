@@ -99,16 +99,14 @@ task deploy(type: Jar){
     }
 }
 
-task moveDesktop doFirst{
-    exec{
-        workingDir "$buildDir"
-        if(System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")){
-            println "Yeeting the mod jar to the shadow realm..."
-            commandLine("cmd", "/C", "move", "/Y", "libs\\${project.archivesBaseName}Desktop.jar", "%userprofile%\\AppData\\Roaming\\Mindustry\\mods")
-        }else{
-            println "This task was made only for Windows. If you are a mac user, please PR the proper command to yeet the mod jar into the mods folder."
-        }
+task move doLast{
+    if(System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
+        println "Yeeting the mod jar to the shadow realm..."
+        ant.move file: "${buildDir}\\libs\\${project.archivesBaseName}Desktop.jar",
+                todir: "${System.env.USERPROFILE}\\AppData\\Roaming\\Mindustry\\mods"
+    }else{
+        println "uhhh how do i do this for not windows"
     }
 }
 
-task jarMove dependsOn "jar", "moveDesktop"
+task jarMove dependsOn "jar", "move"
