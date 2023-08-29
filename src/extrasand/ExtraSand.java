@@ -13,5 +13,8 @@ public class ExtraSand extends Mod{
     @Override
     public void loadContent(){
         EntityRegistry.register();
+
+        EXSUnitTypes.load();
+        EXSBlocks.load();
     }
 }
