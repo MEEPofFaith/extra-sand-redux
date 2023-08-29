@@ -8,12 +8,11 @@ import mindustry.type.*;
 public class ESRUnitTypes{
 
     public static UnitType
+        //oof
+        targetDummy,
 
-    //oof
-    targetDummy,
-
-    //oh god oh god oh god
-    allWeaponsUnit;
+        //oh god oh god oh god
+        allWeaponsUnit;
 
     public static void load(){
         targetDummy = EntityRegistry.content("dummy", TargetDummyUnit.class, name -> new DummyUnitType(name){{

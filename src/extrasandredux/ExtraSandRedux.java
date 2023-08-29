@@ -23,6 +23,9 @@ public class ExtraSandRedux extends Mod{
             loadSettings();
         });
 
+        // Load all assets once they're added into Vars.tree
+        Events.on(FileTreeInitEvent.class, e -> app.post(ESRSounds::load));
+
         //Make sandbox blocks have a ton of health
         if(settings.getBool("esr-sandbox-health", false)){
             Events.on(ContentInitEvent.class, e -> {
