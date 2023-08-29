@@ -1,4 +1,4 @@
-package extrasand.world.blocks.units;
+package extrasand.world.blocks.defence;
 
 import arc.*;
 import arc.graphics.g2d.*;

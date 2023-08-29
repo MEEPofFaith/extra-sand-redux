@@ -3,7 +3,7 @@ package extrasand.entities.comp;
 import arc.util.*;
 import ent.anno.Annotations.*;
 import extrasand.gen.entities.*;
-import extrasand.world.blocks.units.TargetDummyBase.*;
+import extrasand.world.blocks.defence.TargetDummyBase.*;
 import mindustry.gen.*;
 
 @EntityComponent

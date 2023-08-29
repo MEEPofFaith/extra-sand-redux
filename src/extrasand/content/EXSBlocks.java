@@ -1,6 +1,6 @@
 package extrasand.content;
 
-import extrasand.world.blocks.units.*;
+import extrasand.world.blocks.defence.*;
 import mindustry.world.*;
 
 public class EXSBlocks{
@@ -43,6 +43,12 @@ public class EXSBlocks{
         //Power
 
         //Defense
+        sandboxWall = new SandboxWall("sandbox-wall");
+
+        sandboxWallLarge = new SandboxWall("sandbox-wall-large"){{
+            size = 2;
+        }};
+
         targetDummyBase = new TargetDummyBase("target-dummy-base"){{
             size = 2;
             pullScale = 0.1f;

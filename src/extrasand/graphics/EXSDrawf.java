@@ -1,5 +1,6 @@
 package extrasand.graphics;
 
+import arc.*;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.util.*;
@@ -7,6 +8,11 @@ import arc.util.pooling.*;
 import mindustry.ui.*;
 
 public class EXSDrawf{
+    public static void setStrobeColor(){
+        float speed = Core.settings.getInt("exs-strobespeed", 3) / 2f;
+        Draw.color(Tmp.c1.set(Color.red).shiftHue(Time.time * speed), 1f);
+    }
+
     public static float text(float x, float y, Color color, CharSequence text){
         return text(x, y, true, -1, color, text);
     }
