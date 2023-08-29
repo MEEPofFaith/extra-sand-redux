@@ -5,6 +5,7 @@ import arc.struct.*;
 import arc.util.*;
 import extrasand.content.*;
 import extrasand.gen.entities.*;
+import extrasand.graphics.*;
 import mindustry.game.EventType.*;
 import mindustry.mod.*;
 import mindustry.world.*;
@@ -18,6 +19,7 @@ public class ExtraSand extends Mod{
 
     public ExtraSand(){
         Events.on(ClientLoadEvent.class, e -> {
+            PMPal.init();
             loadSettings();
         });
 

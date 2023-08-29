@@ -2,6 +2,7 @@ package extrasand.content;
 
 import extrasand.world.blocks.defence.*;
 import extrasand.world.blocks.effect.*;
+import extrasand.world.blocks.sourcesvoids.*;
 import mindustry.world.*;
 
 public class EXSBlocks{
@@ -38,8 +39,10 @@ public class EXSBlocks{
         //Turret
 
         //Distribution
+        everythingItemSource = new EverythingItemSource("everything-item-source");
 
         //Liquid
+        everythingLiquidSource = new EverythingLiquidSource("everything-liquid-source");
 
         //Power
 
@@ -60,6 +63,10 @@ public class EXSBlocks{
         //Unit
 
         //More sources/voids
+        multiSource = new MultiSource("multi-source");
+        multiVoid = new MultiVoid("multi-void");
+        multiSourceVoid = new MultiSourceVoid("multi-source-void");
+        multiEverythingSourceVoid = new EverythingSourceVoid("material-source-void");
 
         //Effect
         infiniMender = new SandboxMendProjector("infini-mender");
