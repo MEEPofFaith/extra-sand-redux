@@ -1,9 +1,18 @@
-apply plugin: "java"
+plugins{
+    id 'java'
+    id 'com.github.GlennFolker.EntityAnno' version "$entVersion"
+}
 
 version '1.0'
 
-targetCompatibility = 8
-sourceCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = 17
+tasks.withType(JavaCompile).configureEach{
+    sourceCompatibility = 17
+    options.release = 8
+
+    options.incremental = true
+    options.encoding = 'UTF-8'
+}
 
 sourceSets.main.java.srcDirs = ["src"]
 
@@ -14,24 +23,30 @@ repositories{
 }
 
 ext{
-    mindustryVersion = 'v145.1'
-    jabelVersion = "0.7.0"
-    sdkRoot = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
-}
-
-//java 8 backwards compatibility flag
-allprojects{
-    tasks.withType(JavaCompile){
-        options.compilerArgs.addAll(['--release', '8'])
-    }
+    sdkRoot = System.getenv("ANDROID_SDK_ROOT") ?: System.getenv("ANDROID_HOME")
 }
 
 dependencies{
-    //Release
-    compileOnly "com.github.Anuken.Arc:arc-core:$mindustryVersion"
+    // i.
+    compileOnly "com.github.Anuken.Arc:arc-core:$arcVersion"
     compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
 
-    annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
+    // ii.
+    annotationProcessor "com.github.GlennFolker.EntityAnno:downgrader:$entVersion"
+
+    // iii.
+    compileOnly "com.github.GlennFolker.EntityAnno:entity:$entVersion"
+    // iv.
+    kapt "com.github.GlennFolker.EntityAnno:entity:$entVersion"
+}
+
+entityAnno{
+    modName = 'extra-sand-redux'
+    mindustryVersion = project['mindustryVersion']
+    revisionDir = file("$rootDir/revisions/")
+    fetchPackage = 'extrasand.fetched'
+    genSrcPackage = 'extrasand.entities.comp'
+    genPackage = 'extrasand.gen.entities'
 }
 
 task jarAndroid{

@@ -19,7 +19,7 @@ subtitle: "It returns."
 version: 0.0
 
 #the minimum game build required to run this mod
-minGameVersion: 145
+minGameVersion: 145.1
 
 #this is a java mod
 java: true
