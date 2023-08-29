@@ -1,6 +1,7 @@
 package extrasand.content;
 
 import extrasand.world.blocks.defence.*;
+import extrasand.world.blocks.effect.*;
 import mindustry.world.*;
 
 public class EXSBlocks{
@@ -61,5 +62,7 @@ public class EXSBlocks{
         //More sources/voids
 
         //Effect
+        infiniMender = new SandboxMendProjector("infini-mender");
+        infiniOverdrive = new SandboxOverdriveProjector("infini-overdrive");
     }
 }
