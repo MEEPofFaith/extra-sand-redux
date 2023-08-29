@@ -9,7 +9,9 @@ import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.graphics.*;
+import mindustry.content.*;
 import mindustry.entities.units.*;
+import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
 import mindustry.ui.*;
@@ -18,22 +20,26 @@ import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
 
-public class SandboxOverdriveProjector extends OverdriveProjector{
+public class ConfigurableMendProjector extends MendProjector{
     static final Vec2 configs = new Vec2();
 
     public TextureRegion colorRegion;
 
-    public SandboxOverdriveProjector(String name){
+    public ConfigurableMendProjector(String name){
         super(name);
         requirements(Category.effect, BuildVisibility.sandboxOnly, ItemStack.empty);
         alwaysUnlocked = true;
 
         health = 400;
         configurable = saveConfig = true;
-        hasPower = hasItems = hasBoost = false;
+        hasPower = hasItems = false;
+        suppressable = false;
+        range = 80f;
+        reload = 30f;
+        healPercent = 2f;
 
-        config(Vec2.class, (InfiniOverdriveBuild tile, Vec2 values) -> {
-            tile.boost = values.x;
+        config(Vec2.class, (InfiniMendBuild tile, Vec2 values) -> {
+            tile.repairTime = values.x;
             tile.setRange = values.y;
         });
     }
@@ -49,20 +55,14 @@ public class SandboxOverdriveProjector extends OverdriveProjector{
     public void setStats(){
         super.setStats();
 
-        stats.remove(Stat.speedIncrease);
+        stats.remove(Stat.repairTime);
         stats.remove(Stat.range);
-        stats.remove(Stat.productionTime);
-    }
-
-    @Override
-    public void setBars(){
-        super.setBars();
-        addBar("boost", (InfiniOverdriveBuild entity) -> new Bar(() -> Core.bundle.format("bar.boost", Mathf.round(entity.boost)), () -> Pal.accent, () -> 1));
+        stats.remove(Stat.boostEffect);
     }
 
     @Override
     public void drawPlace(int x, int y, int rotation, boolean valid){
-        //skip the stuff added in OverdriveProjector
+        //skip the stuff added in MendProjector
         drawPotentialLinks(x, y);
         drawOverlay(x * tilesize + offset, y * tilesize + offset, rotation);
     }
@@ -88,8 +88,13 @@ public class SandboxOverdriveProjector extends OverdriveProjector{
         indexer.eachBlock(player.team(), plan.drawx(), plan.drawy(), realRange, other -> other.block.canOverdrive, other -> Drawf.selected(other, Tmp.c1.set(baseColor).a(Mathf.absin(4f, 1f))));
     }
 
-    public class InfiniOverdriveBuild extends OverdriveBuild{
-        float boost = 100, setRange = range;
+    float extractHealPercent(float repairTime){
+        if(repairTime == 0) return 1f; //No dividing by 0 on my watch.
+        return 1f / (repairTime * 60f / reload);
+    }
+
+    public class InfiniMendBuild extends MendBuild{
+        public float repairTime = 100f / healPercent * reload / 60f, setRange = range;
 
         @Override
         public void draw(){
@@ -104,15 +109,8 @@ public class SandboxOverdriveProjector extends OverdriveProjector{
             Draw.alpha(heat * Mathf.absin(Time.time, 50f / Mathf.PI2, 1f) * 0.5f);
             Draw.rect(topRegion, x, y);
             Draw.alpha(1f);
-            Lines.stroke((2f * f + 0.1f) * heat);
-
-            float r = Math.max(0f, Mathf.clamp(2f - f * 2f) * size * tilesize / 2f - f - 0.2f), w = Mathf.clamp(0.5f - f) * size * tilesize;
-            Lines.beginLine();
-            for(int i = 0; i < 4; i++){
-                Lines.linePoint(x + Geometry.d4(i).x * r + Geometry.d4(i).y * w, y + Geometry.d4(i).y * r - Geometry.d4(i).x * w);
-                if(f < 0.5f) Lines.linePoint(x + Geometry.d4(i).x * r - Geometry.d4(i).y * w, y + Geometry.d4(i).y * r + Geometry.d4(i).x * w);
-            }
-            Lines.endLine(true);
+            Lines.stroke((2f * f + 0.2f) * heat);
+            Lines.square(x, y, Math.min(1f + (1f - f) * size * tilesize / 2f, size * tilesize/2f));
 
             Draw.reset();
         }
@@ -121,25 +119,29 @@ public class SandboxOverdriveProjector extends OverdriveProjector{
         public void updateTile(){
             smoothEfficiency = Mathf.lerpDelta(smoothEfficiency, efficiency, 0.08f);
             heat = Mathf.lerpDelta(heat, efficiency > 0 ? 1f : 0f, 0.08f);
-            charge += heat * Time.delta;
+            charge += heat * delta();
 
-            if(hasBoost){
-                phaseHeat = Mathf.lerpDelta(phaseHeat, optionalEfficiency, 0.1f);
+            phaseHeat = Mathf.lerpDelta(phaseHeat, optionalEfficiency, 0.1f);
+
+            if(optionalEfficiency > 0 && timer(timerUse, useTime)){
+                consume();
             }
 
             if(charge >= reload){
                 charge = 0f;
-                indexer.eachBlock(this, setRange, other -> other.block.canOverdrive, other -> other.applyBoost(realBoost(), reload + 1f));
-            }
 
-            if(timer(timerUse, useTime) && efficiency > 0){
-                consume();
+                float healPercent = extractHealPercent(repairTime);
+                indexer.eachBlock(this, setRange, Building::damaged, other -> {
+                    other.heal(other.maxHealth() * healPercent * efficiency);
+                    other.recentlyHealed();
+                    Fx.healBlockFull.at(other.x, other.y, other.block.size, baseColor, other.block);
+                });
             }
         }
 
         @Override
         public void drawSelect(){
-            indexer.eachBlock(this, setRange, other -> other.block.canOverdrive, other -> Drawf.selected(other, Tmp.c1.set(baseColor).a(Mathf.absin(4f, 1f))));
+            indexer.eachBlock(this, setRange, other -> true, other -> Drawf.selected(other, Tmp.c1.set(baseColor).a(Mathf.absin(4f, 1f))));
 
             Drawf.dashCircle(x, y, setRange, baseColor);
         }
@@ -148,37 +150,25 @@ public class SandboxOverdriveProjector extends OverdriveProjector{
         public void buildConfiguration(Table table){
             table.table(Styles.black5, t -> {
                 t.marginLeft(6f).marginRight(6f).right();
-                t.add("+");
-                t.field(String.valueOf(boost), text -> {
-                    float newBoost = boost;
+                t.field(String.valueOf(repairTime), text -> {
+                    float newRepairTime = repairTime;
                     if(Strings.canParsePositiveFloat(text)){
-                        newBoost = Strings.parseFloat(text);
+                        newRepairTime = Strings.parseFloat(text);
                     }
-                    configure(configs.set(newBoost, setRange));
+                    configure(configs.set(newRepairTime, setRange));
                 }).width(120).get().setFilter(TextFieldFilter.floatsOnly);
-                t.add(Core.bundle.get("unit.percent")).left();
+                t.add(Core.bundle.get("unit.seconds")).left();
 
                 t.row();
-                t.add();
                 t.field(String.valueOf(setRange / 8f), text -> {
                     float newRange = setRange;
                     if(Strings.canParsePositiveFloat(text)){
                         newRange = Strings.parseFloat(text) * 8f;
                     }
-                    configure(configs.set(boost, newRange));
+                    configure(configs.set(repairTime, newRange));
                 }).width(120).get().setFilter(TextFieldFilter.floatsOnly);
                 t.add(Core.bundle.get("unit.blocks")).left();
             });
-        }
-
-        @Override
-        public Object config(){
-            return configs.set(boost, setRange).cpy();
-        }
-
-        @Override
-        public float realBoost(){
-            return (boost + 100) / 100;
         }
 
         @Override
@@ -187,10 +177,15 @@ public class SandboxOverdriveProjector extends OverdriveProjector{
         }
 
         @Override
+        public Object config(){
+            return configs.set(repairTime, setRange).cpy();
+        }
+
+        @Override
         public void write(Writes write){
             super.write(write);
 
-            write.f(boost);
+            write.f(repairTime);
             write.f(setRange);
         }
 
@@ -198,7 +193,7 @@ public class SandboxOverdriveProjector extends OverdriveProjector{
         public void read(Reads read, byte revision){
             super.read(read, revision);
 
-            boost = read.f();
+            repairTime = read.f();
             setRange = read.f();
         }
     }

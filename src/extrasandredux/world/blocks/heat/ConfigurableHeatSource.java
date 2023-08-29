@@ -16,10 +16,10 @@ import mindustry.world.blocks.heat.*;
 import mindustry.world.draw.*;
 import mindustry.world.meta.*;
 
-public class InfiniHeatSource extends Block{
+public class ConfigurableHeatSource extends Block{
     public DrawBlock drawer = new DrawMulti(new DrawDefault(), new DrawHeatOutput());
 
-    public InfiniHeatSource(String name){
+    public ConfigurableHeatSource(String name){
         super(name);
         requirements(Category.crafting, BuildVisibility.sandboxOnly, ItemStack.empty);
         alwaysUnlocked = true;

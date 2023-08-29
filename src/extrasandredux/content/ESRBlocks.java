@@ -18,28 +18,28 @@ public class ESRBlocks{
         eviscerator, everythingGun,
 
         //Distribution
-        everythingItemSource,
+        everythingItemSource, //TODO replace with a smart item source - link to blocks and fill with items based on consume filter
 
         //Liquid
-        everythingLiquidSource,
+        everythingLiquidSource, //TODO replace with a smart liquid source - link to blocks and fill with items based on consume filter
 
         //Power
-        strobeNode, strobeInf, strobeBoost,
+        configurablePowerSource, configurablePowerVoid, configurableBattery, smartPowerSource,
 
         //Defense
         sandboxWall, sandboxWallLarge, targetDummyBase,
 
         //Heat
-        sandboxHeatSource,
+        configurableHeatSource,
 
         //Unit
-        godFactory, capBlock,
+        allWeaponsUnitSpawner, capBlock,
 
         //Items
         multiSource, multiVoid, multiSourceVoid, multiEverythingSourceVoid,
 
         //Effect
-        sandboxMendProjector, sandboxOverdriveProjector;
+        configurableMendProjector, configurableOverdriveProjector;
 
     public static void load(){
         //Turret
@@ -127,7 +127,7 @@ public class ESRBlocks{
         }};
 
         //Heat
-        sandboxHeatSource = new InfiniHeatSource("infini-heater");
+        configurableHeatSource = new ConfigurableHeatSource("infini-heater");
 
         //Unit
         capBlock = new CapBlock("cap-block"){{
@@ -141,7 +141,7 @@ public class ESRBlocks{
         multiEverythingSourceVoid = new EverythingSourceVoid("material-source-void");
 
         //Effect
-        sandboxMendProjector = new SandboxMendProjector("infini-mender");
-        sandboxOverdriveProjector = new SandboxOverdriveProjector("infini-overdrive");
+        configurableMendProjector = new ConfigurableMendProjector("infini-mender");
+        configurableOverdriveProjector = new ConfigurableOverdriveProjector("infini-overdrive");
     }
 }
