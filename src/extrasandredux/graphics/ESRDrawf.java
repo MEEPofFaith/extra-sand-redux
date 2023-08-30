@@ -9,8 +9,13 @@ import mindustry.ui.*;
 
 public class ESRDrawf{
     public static void setStrobeColor(){
+        Draw.color(applyStrobeHue(Tmp.c1.set(Color.red)));
+    }
+
+    public static Color applyStrobeHue(Color color){
         float speed = Core.settings.getInt("esr-strobespeed", 3) / 2f;
-        Draw.color(Tmp.c1.set(Color.red).shiftHue(Time.time * speed), 1f);
+        color.shiftHue(Time.time * speed);
+        return color;
     }
 
     public static float text(float x, float y, Color color, CharSequence text){

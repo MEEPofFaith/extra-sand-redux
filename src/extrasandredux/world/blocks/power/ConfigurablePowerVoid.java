@@ -8,7 +8,6 @@ import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.graphics.*;
 import extrasandredux.util.*;
-import extrasandredux.world.blocks.heat.ConfigurableHeatSource.*;
 import mindustry.gen.*;
 import mindustry.type.*;
 import mindustry.ui.*;
@@ -16,7 +15,7 @@ import mindustry.world.blocks.power.*;
 import mindustry.world.meta.*;
 
 public class ConfigurablePowerVoid extends PowerBlock{
-    public float defaultPowerConsumption = 1000f;
+    public float initialPowerConsumption = 1000f;
     public TextureRegion colorRegion;
 
     public ConfigurablePowerVoid(String name){
@@ -40,7 +39,7 @@ public class ConfigurablePowerVoid extends PowerBlock{
     }
 
     public class ConfigurablePowerVoidBuild extends Building{
-        public float powerConsumption = defaultPowerConsumption;
+        public float powerConsumption = initialPowerConsumption;
 
         @Override
         public void draw(){

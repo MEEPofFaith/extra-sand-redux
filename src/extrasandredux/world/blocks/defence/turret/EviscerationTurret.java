@@ -7,7 +7,6 @@ import arc.struct.*;
 import arc.util.*;
 import extrasandredux.util.*;
 import extrasandredux.world.meta.*;
-import mindustry.entities.bullet.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;

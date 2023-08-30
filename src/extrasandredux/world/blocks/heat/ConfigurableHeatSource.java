@@ -1,6 +1,5 @@
 package extrasandredux.world.blocks.heat;
 
-import arc.*;
 import arc.graphics.g2d.*;
 import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;

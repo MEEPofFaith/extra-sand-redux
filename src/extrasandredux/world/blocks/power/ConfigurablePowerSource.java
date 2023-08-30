@@ -8,7 +8,6 @@ import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.graphics.*;
 import extrasandredux.util.*;
-import extrasandredux.world.blocks.power.ConfigurablePowerVoid.*;
 import mindustry.gen.*;
 import mindustry.type.*;
 import mindustry.ui.*;
@@ -16,7 +15,7 @@ import mindustry.world.blocks.power.*;
 import mindustry.world.meta.*;
 
 public class ConfigurablePowerSource extends PowerBlock{
-    public float defaultPowerProduction = 1000f;
+    public float initialPowerProduction = 1000f;
     public TextureRegion colorRegion;
 
     public ConfigurablePowerSource(String name){
@@ -38,7 +37,7 @@ public class ConfigurablePowerSource extends PowerBlock{
     }
 
     public class ConfigurablePowerSourceBuild extends Building{
-        public float powerProduction = defaultPowerProduction;
+        public float powerProduction = initialPowerProduction;
 
         @Override
         public void draw(){

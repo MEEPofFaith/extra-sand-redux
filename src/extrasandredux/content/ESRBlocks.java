@@ -119,6 +119,7 @@ public class ESRBlocks{
         //Power
         configurablePowerSource = new ConfigurablePowerSource("configurable-power-source");
         configurablePowerVoid = new ConfigurablePowerVoid("configurable-power-void");
+        configurableBattery = new ConfigurableBattery("configurable-battery");
         smartPowerSource = new SmartPowerSource("smart-power-source");
 
         //Defense
