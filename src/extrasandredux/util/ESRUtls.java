@@ -13,6 +13,10 @@ public class ESRUtls{
         block.envEnabled = Env.any;
     }
 
+    public static String statUnitName(StatUnit statUnit){
+        return statUnit.icon != null ? statUnit.icon + " " + statUnit.localized() : statUnit.localized();
+    }
+
     public static String round(float f){
         if(f >= 1_000_000_000){
             return Strings.autoFixed(f / 1_000_000_000, 1) + UI.billions;

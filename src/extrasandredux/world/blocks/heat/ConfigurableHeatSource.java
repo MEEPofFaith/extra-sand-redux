@@ -82,7 +82,7 @@ public class ConfigurableHeatSource extends Block{
                 t.field(String.valueOf(heat), text -> {
                     configure(Strings.parseFloat(text));
                 }).width(120).valid(Strings::canParsePositiveFloat).get().setFilter(TextFieldFilter.floatsOnly);
-                t.add(Core.bundle.get("unit.heatunits")).left();
+                t.add(ESRUtls.statUnitName(StatUnit.heatUnits)).left();
             });
         }
 

@@ -5,6 +5,7 @@ import extrasandredux.world.blocks.defence.*;
 import extrasandredux.world.blocks.defence.turret.*;
 import extrasandredux.world.blocks.effect.*;
 import extrasandredux.world.blocks.heat.*;
+import extrasandredux.world.blocks.power.*;
 import extrasandredux.world.blocks.sourcesvoids.*;
 import extrasandredux.world.blocks.units.*;
 import mindustry.entities.bullet.*;
@@ -116,6 +117,9 @@ public class ESRBlocks{
         everythingLiquidSource = new EverythingLiquidSource("everything-liquid-source");
 
         //Power
+        configurablePowerSource = new ConfigurablePowerSource("configurable-power-source");
+        configurablePowerVoid = new ConfigurablePowerVoid("configurable-power-void");
+        smartPowerSource = new SmartPowerSource("smart-power-source");
 
         //Defense
         sandboxWall = new SandboxWall("sandbox-wall");
