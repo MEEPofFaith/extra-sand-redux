@@ -1,9 +1,12 @@
 package extrasandredux.world.blocks.power;
 
+import arc.*;
+import arc.graphics.g2d.*;
 import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
+import extrasandredux.graphics.*;
 import extrasandredux.util.*;
 import extrasandredux.world.blocks.heat.ConfigurableHeatSource.*;
 import mindustry.gen.*;
@@ -14,6 +17,7 @@ import mindustry.world.meta.*;
 
 public class ConfigurablePowerVoid extends PowerBlock{
     public float defaultPowerConsumption = 1000f;
+    public TextureRegion colorRegion;
 
     public ConfigurablePowerVoid(String name){
         super(name);
@@ -29,8 +33,23 @@ public class ConfigurablePowerVoid extends PowerBlock{
         config(Float.class, (ConfigurablePowerVoidBuild build, Float f) -> build.powerConsumption = f);
     }
 
+    @Override
+    public void load(){
+        super.load();
+        colorRegion = Core.atlas.find(name + "-strobe");
+    }
+
     public class ConfigurablePowerVoidBuild extends Building{
         public float powerConsumption = defaultPowerConsumption;
+
+        @Override
+        public void draw(){
+            super.draw();
+
+            ESRDrawf.setStrobeColor();
+            Draw.rect(colorRegion, x, y);
+            Draw.color();
+        }
 
         @Override
         public void buildConfiguration(Table table){
