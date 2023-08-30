@@ -1,5 +1,6 @@
 package extrasandredux.world.blocks.sourcesvoids;
 
+import extrasandredux.util.*;
 import mindustry.gen.*;
 import mindustry.type.*;
 import mindustry.world.*;
@@ -8,8 +9,7 @@ import mindustry.world.meta.*;
 public class MultiVoid extends Block{
     public MultiVoid(String name){
         super(name);
-        requirements(Category.effect, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.effect);
 
         update = solid = acceptsItems = hasLiquids = true;
         group = BlockGroup.transportation;

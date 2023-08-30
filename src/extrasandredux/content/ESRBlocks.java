@@ -35,8 +35,11 @@ public class ESRBlocks{
         //Unit
         allWeaponsUnitSpawner, capBlock,
 
-        //Items
+        //More sources/voids
         multiSource, multiVoid, multiSourceVoid, multiEverythingSourceVoid,
+
+        //Storage
+        configurableStorageContainer, placeableCore,
 
         //Effect
         configurableMendProjector, configurableOverdriveProjector;

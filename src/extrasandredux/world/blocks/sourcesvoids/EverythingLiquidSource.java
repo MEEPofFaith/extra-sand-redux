@@ -4,6 +4,7 @@ import arc.*;
 import arc.graphics.g2d.*;
 import arc.util.*;
 import extrasandredux.graphics.*;
+import extrasandredux.util.*;
 import mindustry.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -17,8 +18,7 @@ public class EverythingLiquidSource extends Block{
 
     public EverythingLiquidSource(String name){
         super(name);
-        requirements(Category.liquid, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.liquid);
 
         update = true;
         solid = true;

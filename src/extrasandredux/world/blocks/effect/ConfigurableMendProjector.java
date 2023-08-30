@@ -9,6 +9,7 @@ import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.graphics.*;
+import extrasandredux.util.*;
 import mindustry.content.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
@@ -27,8 +28,7 @@ public class ConfigurableMendProjector extends MendProjector{
 
     public ConfigurableMendProjector(String name){
         super(name);
-        requirements(Category.effect, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.effect);
 
         health = 400;
         configurable = saveConfig = true;

@@ -40,8 +40,7 @@ public class SandboxWall extends Block{
 
     public SandboxWall(String name){
         super(name);
-        requirements(Category.defense, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.defense);
 
         solid = true;
         destructible = true;

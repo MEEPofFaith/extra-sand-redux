@@ -2,8 +2,17 @@ package extrasandredux.util;
 
 import arc.util.*;
 import mindustry.core.*;
+import mindustry.type.*;
+import mindustry.world.*;
+import mindustry.world.meta.*;
 
 public class ESRUtls{
+    public static void applySandboxDefaults(Block block, Category category){
+        block.requirements(category, BuildVisibility.sandboxOnly, ItemStack.empty);
+        block.alwaysUnlocked = true;
+        block.envEnabled = Env.any;
+    }
+
     public static String round(float f){
         if(f >= 1_000_000_000){
             return Strings.autoFixed(f / 1_000_000_000, 1) + UI.billions;

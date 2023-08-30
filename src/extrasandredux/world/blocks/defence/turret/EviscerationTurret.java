@@ -5,6 +5,7 @@ import arc.math.*;
 import arc.math.Interp.*;
 import arc.struct.*;
 import arc.util.*;
+import extrasandredux.util.*;
 import extrasandredux.world.meta.*;
 import mindustry.entities.bullet.*;
 import mindustry.gen.*;
@@ -20,8 +21,7 @@ public class EviscerationTurret extends PowerTurret{
 
     public EviscerationTurret(String name){
         super(name);
-        requirements(Category.turret, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.turret);
 
         drawer = new DrawTurret(){
             @Override

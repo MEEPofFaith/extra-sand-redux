@@ -9,6 +9,7 @@ import arc.scene.ui.ImageButton.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
+import extrasandredux.util.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -25,8 +26,7 @@ public class MultiSource extends Block{
 
     public MultiSource(String name){
         super(name);
-        requirements(Category.effect, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.effect);
 
         update = solid = saveConfig = noUpdateDisabled = true;
         hasItems = hasLiquids = true;

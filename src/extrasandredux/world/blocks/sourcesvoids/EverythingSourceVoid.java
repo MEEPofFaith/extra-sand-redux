@@ -4,6 +4,7 @@ import arc.*;
 import arc.graphics.g2d.*;
 import arc.util.*;
 import extrasandredux.graphics.*;
+import extrasandredux.util.*;
 import mindustry.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -18,8 +19,7 @@ public class EverythingSourceVoid extends Block{
 
     public EverythingSourceVoid(String name){
         super(name);
-        requirements(Category.effect, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.effect);
 
         update = solid = true;
         hasItems = hasLiquids = acceptsItems = true;

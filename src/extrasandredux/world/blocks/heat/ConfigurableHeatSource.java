@@ -7,6 +7,7 @@ import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
 import arc.util.io.*;
+import extrasandredux.util.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -21,8 +22,7 @@ public class ConfigurableHeatSource extends Block{
 
     public ConfigurableHeatSource(String name){
         super(name);
-        requirements(Category.crafting, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.crafting);
 
         configurable = saveConfig = true;
 

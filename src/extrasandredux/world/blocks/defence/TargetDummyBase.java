@@ -34,8 +34,7 @@ public class TargetDummyBase extends Block{
 
     public TargetDummyBase(String name){
         super(name);
-        requirements(Category.defense, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.defense);
 
         update = alwaysUpdateInUnits = true;
         configurable = logicConfigurable = saveConfig = true;

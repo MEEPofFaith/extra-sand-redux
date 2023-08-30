@@ -9,6 +9,7 @@ import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.graphics.*;
+import extrasandredux.util.*;
 import mindustry.entities.units.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
@@ -25,8 +26,7 @@ public class ConfigurableOverdriveProjector extends OverdriveProjector{
 
     public ConfigurableOverdriveProjector(String name){
         super(name);
-        requirements(Category.effect, BuildVisibility.sandboxOnly, ItemStack.empty);
-        alwaysUnlocked = true;
+        ESRUtls.applySandboxDefaults(this, Category.effect);
 
         health = 400;
         configurable = saveConfig = true;
