@@ -47,7 +47,7 @@ public class ESRBlocks{
 
     public static void load(){
         //Turret
-        eviscerator = new EviscerationTurret("harbinger"){{
+        eviscerator = new EviscerationTurret("harbinger"){{ //TODO make it look like a duo and then have it expand to oh go oh god oh god
             float brange = 900f;
 
             size = 8;
@@ -110,6 +110,14 @@ public class ESRBlocks{
             consumePower(300f);
         }};
 
+        everythingGun = new EverythingTurret("everything-gun"){{
+            size = 6;
+            rotateSpeed = 20f;
+            reload = 1f;
+            range = 4400f;
+            shootCone = 360f;
+        }};
+
         //Distribution
         everythingItemSource = new EverythingItemSource("everything-item-source");
 
@@ -140,6 +148,10 @@ public class ESRBlocks{
         //Unit
         capBlock = new CapBlock("cap-block"){{
             unitCapModifier = 25;
+        }};
+
+        allWeaponsUnitSpawner = new BoxedUnit("boxed-flarogus", ESRUnitTypes.allWeaponsUnit){{
+            size = 2;
         }};
 
         //More sources/voids

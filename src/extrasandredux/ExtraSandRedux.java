@@ -1,20 +1,29 @@
 package extrasandredux;
 
 import arc.*;
+import arc.audio.*;
 import arc.struct.*;
 import arc.util.*;
 import extrasandredux.content.*;
 import extrasandredux.gen.entities.*;
 import extrasandredux.graphics.*;
+import extrasandredux.util.*;
+import extrasandredux.world.blocks.defence.turret.*;
+import mindustry.content.*;
+import mindustry.entities.*;
+import mindustry.entities.bullet.*;
 import mindustry.game.EventType.*;
 import mindustry.mod.*;
+import mindustry.type.*;
 import mindustry.world.*;
+import mindustry.world.blocks.defense.turrets.*;
 
 import static arc.Core.*;
 import static mindustry.Vars.*;
 import static mindustry.content.Blocks.*;
 
 public class ExtraSandRedux extends Mod{
+    public static Seq<BulletData> allBullets = new Seq<>();
     public static int sandboxBlockHealthMultiplier = 1000000;
 
     public ExtraSandRedux(){
@@ -55,11 +64,25 @@ public class ExtraSandRedux extends Mod{
     }
 
     @Override
+    public void init(){
+        Events.on(ClientLoadEvent.class, e -> {
+            if(everything()){
+                godHood(ESRUnitTypes.allWeaponsUnit);
+                setupEveryBullets((EverythingTurret)ESRBlocks.everythingGun);
+            }
+        });
+    }
+
+    @Override
     public void loadContent(){
         EntityRegistry.register();
 
         ESRUnitTypes.load();
         ESRBlocks.load();
+    }
+
+    public static boolean everything(){
+        return settings.getBool("esr-sandbox-everything", false);
     }
 
     private void loadSettings(){
@@ -68,5 +91,115 @@ public class ExtraSandRedux extends Mod{
             t.checkPref("esr-sandbox-health", false);
             t.checkPref("esr-sandbox-everything", false);
         });
+    }
+
+    public static void godHood(UnitType ascending){
+        int[] index = {0};
+        content.units().each(u -> u != ascending, u -> {
+            u.weapons.each(w -> {
+                if(!w.bullet.killShooter){
+                    Weapon copy = w.copy();
+                    ascending.weapons.add(copy);
+                    if(w.otherSide != -1){
+                        int diff = w.otherSide - u.weapons.get(w.otherSide).otherSide;
+                        copy.otherSide = index[0] + diff;
+                    }
+
+                    if(copy.rotate) copy.rotateSpeed = 360f;
+                    copy.shootCone = 360f;
+
+                    if(copy.shootStatus == StatusEffects.unmoving || copy.shootStatus == StatusEffects.slow){
+                        copy.shootStatus = StatusEffects.none;
+                    }
+                    index[0]++;
+                }
+            });
+
+            u.abilities.each(a -> ascending.abilities.add(a));
+        });
+    }
+
+    public static void setupEveryBullets(Turret base){
+        content.units().each(u -> u.weapons.each(w -> w.bullet != null, w -> {
+            BulletType bul = w.bullet;
+            BulletData data = new BulletData(bul, w.shootSound, bul.shootEffect, bul.smokeEffect, w.shake, bul.lifetime);
+            if(!allBullets.contains(data)){
+                allBullets.add(data);
+            }
+        }));
+        content.blocks().each(b -> b instanceof Turret, b -> {
+            if(b != base){
+                if(b instanceof LaserTurret block && block.shootType != null){
+                    BulletType bul = block.shootType;
+                    Effect fshootEffect = block.shootEffect == null ? bul.shootEffect : block.shootEffect;
+                    Effect fsmokeEffect = block.smokeEffect == null ? bul.smokeEffect : block.smokeEffect;
+                    BulletData data = new BulletData(bul, block.shootSound, fshootEffect, fsmokeEffect, block.shake, bul.lifetime + block.shootDuration, true);
+                    allBullets.add(data);
+                }else if(b instanceof PowerTurret block && block.shootType != null){
+                    BulletType bul = block.shootType;
+                    Effect fshootEffect = block.shootEffect == null ? bul.shootEffect : block.shootEffect;
+                    Effect fsmokeEffect = block.smokeEffect == null ? bul.smokeEffect : block.smokeEffect;
+                    BulletData data = new BulletData(bul, block.shootSound, fshootEffect, fsmokeEffect, block.shake, bul.lifetime);
+                    allBullets.add(data);
+                }else if(b instanceof ItemTurret block){
+                    for(BulletType bul : block.ammoTypes.values()){
+                        Effect fshootEffect = block.shootEffect == null ? bul.shootEffect : block.shootEffect;
+                        Effect fsmokeEffect = block.smokeEffect == null ? bul.smokeEffect : block.smokeEffect;
+                        BulletData data = new BulletData(bul, block.shootSound, fshootEffect, fsmokeEffect, block.shake, bul.lifetime);
+                        allBullets.add(data);
+                    }
+                }else if(b instanceof LiquidTurret block){
+                    for(BulletType bul : block.ammoTypes.values()){
+                        Effect fshootEffect = block.shootEffect == null ? bul.shootEffect : block.shootEffect;
+                        Effect fsmokeEffect = block.smokeEffect == null ? bul.smokeEffect : block.smokeEffect;
+                        BulletData data = new BulletData(bul, block.shootSound, fshootEffect, fsmokeEffect, block.shake, bul.lifetime);
+                        allBullets.add(data);
+                    }
+                }else if(b instanceof PayloadAmmoTurret block){
+                    for(BulletType bul : block.ammoTypes.values()){
+                        Effect fshootEffect = block.shootEffect == null ? bul.shootEffect : block.shootEffect;
+                        Effect fsmokeEffect = block.smokeEffect == null ? bul.smokeEffect : block.smokeEffect;
+                        BulletData data = new BulletData(bul, block.shootSound, fshootEffect, fsmokeEffect, block.shake, bul.lifetime);
+                        allBullets.add(data);
+                    }
+                }
+            }
+        });
+
+        allBullets.sort(b -> ESRUtls.bulletDamage(b.bulletType, b.lifetime));
+    }
+
+    public static class BulletData{
+        public BulletType bulletType;
+        public Sound shootSound;
+        public Effect shootEffect, smokeEffect;
+        public float shake, lifetime;
+        public boolean continuousBlock;
+
+        public BulletData(BulletType bulletType, Sound shootSound, Effect shakeEffect, Effect smokeEffect, float shake, float lifetime, boolean continuous){
+            this.bulletType = bulletType;
+            this.shootSound = shootSound;
+            this.shootEffect = shakeEffect;
+            this.smokeEffect = smokeEffect;
+            this.shake = shake;
+            this.lifetime = lifetime;
+            this.continuousBlock = continuous;
+        }
+
+        public BulletData(BulletType bulletType, Sound shootSound, Effect shootEffect, Effect smokeEffect, float shake, float lifetime){
+            this(bulletType, shootSound, shootEffect, smokeEffect, shake, lifetime, false);
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            return obj instanceof BulletData o &&
+                bulletType == o.bulletType &&
+                shootSound == o.shootSound &&
+                shootEffect == o.shootEffect &&
+                smokeEffect == o.smokeEffect &&
+                shake == o.shake &&
+                lifetime == o.lifetime &&
+                continuousBlock == o.continuousBlock;
+        }
     }
 }

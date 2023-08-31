@@ -2,6 +2,7 @@ package extrasandredux.util;
 
 import arc.util.*;
 import mindustry.core.*;
+import mindustry.entities.bullet.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
@@ -15,6 +16,31 @@ public class ESRUtls{
 
     public static String statUnitName(StatUnit statUnit){
         return statUnit.icon != null ? statUnit.icon + " " + statUnit.localized() : statUnit.localized();
+    }
+
+    public static float bulletDamage(BulletType b, float lifetime){
+        if(b.spawnUnit != null){ //Missile unit damage
+            Weapon uW = b.spawnUnit.weapons.first();
+            return bulletDamage(uW.bullet, uW.bullet.lifetime) * uW.shoot.shots;
+        }else{
+            float damage = b.damage + b.splashDamage; //Base Damage
+            damage += b.lightningDamage * b.lightning * b.lightningLength; //Lightning Damage
+
+            if(b.fragBullet != null){ //Frag Bullet Damage
+                damage += bulletDamage(b.fragBullet, b.fragBullet.lifetime) * b.fragBullets;
+            }
+
+            if(b.intervalBullet != null){ //Interval Bullet Damage
+                int amount = (int)(lifetime / b.bulletInterval * b.intervalBullets);
+                damage += bulletDamage(b.intervalBullet, b.intervalBullet.lifetime) * amount;
+            }
+
+            if(b instanceof ContinuousBulletType cB){ //Continuous Damage
+                return damage * lifetime / cB.damageInterval;
+            }else{
+                return damage;
+            }
+        }
     }
 
     public static String round(float f){

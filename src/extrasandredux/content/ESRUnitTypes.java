@@ -1,9 +1,17 @@
 package extrasandredux.content;
 
+import arc.*;
+import arc.graphics.g2d.*;
 import arc.math.geom.*;
+import extrasandredux.*;
 import extrasandredux.gen.entities.*;
+import extrasandredux.graphics.*;
 import extrasandredux.type.unit.*;
+import extrasandredux.ui.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
 import mindustry.type.*;
+import mindustry.world.meta.*;
 
 public class ESRUnitTypes{
 
@@ -25,5 +33,45 @@ public class ESRUnitTypes{
                 engines.add(new UnitEngine(Geometry.d4x(i) * engineOffset, Geometry.d4y(i) * engineOffset, engineSize, i * 90));
             }
         }});
+
+        allWeaponsUnit = EntityRegistry.content("god", UnitEntity.class, name -> new UnitType(name){
+            {
+                alwaysUnlocked = true;
+                hidden = !ExtraSandRedux.everything();
+                flying = true;
+                lowAltitude = true;
+                mineSpeed = 100f;
+                mineTier = 10000;
+                buildSpeed = 10000f;
+                drag = 0.05f;
+                speed = 3.55f;
+                rotateSpeed = 19f;
+                accel = 0.11f;
+                itemCapacity = 20000;
+                health = 200000f;
+                engineOffset = 5.5f;
+                hitSize = 11f;
+            }
+
+            @Override
+            public void setStats(){
+                super.setStats();
+
+                stats.remove(Stat.abilities);
+                stats.remove(Stat.weapons);
+                stats.add(Stat.abilities, t -> t.add(ESRElements.everything()));
+                stats.add(Stat.weapons, t -> t.add(ESRElements.everything()));
+            }
+
+            @Override
+            public void draw(Unit unit){
+                super.draw(unit);
+
+                if(!ExtraSandRedux.everything()){
+                    Draw.z(Layer.overlayUI);
+                    ESRDrawf.text(unit.x, unit.y, false, -1, unit.team.color, Core.bundle.get("esr-sandbox-disabled"));
+                }
+            }
+        });
     }
 }

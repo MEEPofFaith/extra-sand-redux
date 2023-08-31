@@ -5,7 +5,9 @@ import arc.graphics.g2d.*;
 import arc.math.*;
 import arc.util.*;
 import mindustry.entities.*;
+import mindustry.graphics.*;
 
+import static arc.graphics.g2d.Draw.*;
 import static arc.util.Tmp.*;
 import static mindustry.graphics.Drawf.*;
 
@@ -19,7 +21,7 @@ public class ESRFx{
 
             float lightOpacity = 0.4f + (e.finpow() * 0.4f);
 
-            Draw.color(colors[0], colors[2], 0.5f + e.finpow() * 0.5f);
+            color(colors[0], colors[2], 0.5f + e.finpow() * 0.5f);
             Lines.stroke(Mathf.lerp(0f, 28f, e.finpow()));
             Lines.circle(e.x, e.y, 384f * (1f - e.finpow()));
 
@@ -35,7 +37,7 @@ public class ESRFx{
 
             for(int i = 0; i < 4; i++){
                 float baseLen = (900f + (Mathf.absin(Time.time / ((i + 1f) * 2f) + Mathf.randomSeed(e.id), 0.8f, 1.5f) * (900f / 1.5f))) * 0.75f * fade;
-                Draw.color(Tmp.c1.set(colors[i]).mul(1f + Mathf.absin(Time.time / 3f + Mathf.randomSeed(e.id), 1.0f, 0.3f) / 3f));
+                color(Tmp.c1.set(colors[i]).mul(1f + Mathf.absin(Time.time / 3f + Mathf.randomSeed(e.id), 1.0f, 0.3f) / 3f));
                 for(int j = 0; j < 2; j++){
                     int dir = Mathf.signs[j];
                     for(int k = 0; k < 10; k++){
@@ -52,5 +54,13 @@ public class ESRFx{
                 }
                 Draw.reset();
             }
-        });
+        }),
+
+        //[circle radius, distance]
+        everythingGunSwirl = new Effect(120f, 1600f, e -> {
+            float[] data = (float[])e.data;
+            v1.trns(Mathf.randomSeed(e.id, 360f) + e.rotation * e.fin(), (16f + data[1]) * e.fin());
+            color(e.color, Color.black, 0.25f + e.fin() * 0.75f);
+            Fill.circle(e.x + v1.x, e.y + v1.y, data[0] * e.fout());
+        }).layer(Layer.bullet - 0.00999f);
 }
