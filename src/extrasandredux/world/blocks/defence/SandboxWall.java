@@ -275,8 +275,7 @@ public class SandboxWall extends Block{
 
         @Override
         public void buildConfiguration(Table table){
-            table.table(t -> {
-                t.background(Styles.black6);
+            table.table(Styles.black6, t -> {
                 t.defaults().left();
                 t.table(i -> {
                     i.defaults().left();

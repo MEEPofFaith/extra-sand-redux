@@ -7,6 +7,7 @@ import extrasandredux.world.blocks.effect.*;
 import extrasandredux.world.blocks.heat.*;
 import extrasandredux.world.blocks.power.*;
 import extrasandredux.world.blocks.sourcesvoids.*;
+import extrasandredux.world.blocks.storage.*;
 import extrasandredux.world.blocks.units.*;
 import mindustry.entities.bullet.*;
 import mindustry.entities.pattern.*;
@@ -23,6 +24,7 @@ public class ESRBlocks{
 
         //Liquid
         everythingLiquidSource, //TODO replace with a smart liquid source - link to blocks and fill with items based on consume filter
+        configurableLiquidContainer,
 
         //Power
         configurablePowerSource, configurablePowerVoid, configurableBattery, smartPowerSource,
@@ -40,7 +42,7 @@ public class ESRBlocks{
         multiSource, multiVoid, multiSourceVoid, multiEverythingSourceVoid,
 
         //Storage
-        configurableStorageContainer, placeableCore,
+        configurableContainer, placeableCore,
 
         //Effect
         configurableMendProjector, configurableOverdriveProjector;
@@ -159,6 +161,11 @@ public class ESRBlocks{
         multiVoid = new MultiVoid("multi-void");
         multiSourceVoid = new MultiSourceVoid("multi-source-void");
         multiEverythingSourceVoid = new EverythingSourceVoid("material-source-void");
+
+        //Storage
+        configurableContainer = new ConfigurableContainer("configurable-container"){{
+            size = 2;
+        }};
 
         //Effect
         configurableMendProjector = new ConfigurableMendProjector("infini-mender");
