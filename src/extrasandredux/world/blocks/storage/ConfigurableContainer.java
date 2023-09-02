@@ -10,6 +10,7 @@ import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.graphics.*;
 import extrasandredux.util.*;
+import mindustry.core.*;
 import mindustry.ctype.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -61,9 +62,9 @@ public class ConfigurableContainer extends StorageBlock{
 
         removeBar("items");
         addBar("items", (ConfigurableContainerBuild entity) -> new Bar(
-            () -> Core.bundle.format("bar.items", entity.items.total()),
+            () -> Core.bundle.format("bar.capacity", UI.formatAmount(entity.storageCapacity)),
             () -> Pal.items,
-            () -> entity.items.total() / ((float)entity.storageCapacity * content.items().count(UnlockableContent::unlockedNow))
+            () -> (float)entity.items.total() / entity.storageCapacity * content.items().count(UnlockableContent::unlockedNow)
         ));
     }
 

@@ -43,7 +43,12 @@ public class ESRUtls{
         }
     }
 
+    /** Similar to {@link UI#formatAmount(long)} but for floats. */
     public static String round(float f){
+        //prevent things like bars displaying erroneous representations of casted infinities
+        if(f == Float.MAX_VALUE) return "∞";
+        if(f == Float.MIN_VALUE) return "-∞";
+
         if(f >= 1_000_000_000){
             return Strings.autoFixed(f / 1_000_000_000, 1) + UI.billions;
         }else if(f >= 1_000_000){

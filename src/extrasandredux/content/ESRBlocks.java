@@ -5,6 +5,7 @@ import extrasandredux.world.blocks.defence.*;
 import extrasandredux.world.blocks.defence.turret.*;
 import extrasandredux.world.blocks.effect.*;
 import extrasandredux.world.blocks.heat.*;
+import extrasandredux.world.blocks.payload.*;
 import extrasandredux.world.blocks.power.*;
 import extrasandredux.world.blocks.sourcesvoids.*;
 import extrasandredux.world.blocks.storage.*;
@@ -24,7 +25,7 @@ public class ESRBlocks{
 
         //Liquid
         everythingLiquidSource, //TODO replace with a smart liquid source - link to blocks and fill with items based on consume filter
-        configurableLiquidContainer,
+        configurableLiquidContainer, //Put on hold. Liquid transfer rate is based on capacity, and it does not support dynamic capacity.
 
         //Power
         configurablePowerSource, configurablePowerVoid, configurableBattery, smartPowerSource,
@@ -36,7 +37,10 @@ public class ESRBlocks{
         configurableHeatSource,
 
         //Unit
-        allWeaponsUnitSpawner, capBlock,
+        boxedFlarogus, capBlock,
+
+        //Payload
+        capacityConfigurer,
 
         //More sources/voids
         multiSource, multiVoid, multiSourceVoid, multiEverythingSourceVoid,
@@ -152,9 +156,12 @@ public class ESRBlocks{
             unitCapModifier = 25;
         }};
 
-        allWeaponsUnitSpawner = new BoxedUnit("boxed-flarogus", ESRUnitTypes.allWeaponsUnit){{
+        boxedFlarogus = new BoxedUnit("boxed-flarogus", ESRUnitTypes.allWeaponsUnit){{
             size = 2;
         }};
+
+        //Payload
+        capacityConfigurer = new CapacityConfigurer("capacity-configurer");
 
         //More sources/voids
         multiSource = new MultiSource("multi-source");

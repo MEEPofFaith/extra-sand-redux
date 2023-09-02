@@ -9,10 +9,17 @@ import mindustry.graphics.*;
 
 import static arc.graphics.g2d.Draw.*;
 import static arc.util.Tmp.*;
+import static mindustry.Vars.*;
 import static mindustry.graphics.Drawf.*;
 
 public class ESRFx{
     public static Effect
+        storageConfiged = new Effect(30f, e -> {
+            color(e.color);
+            alpha(e.fout() * 1);
+            Fill.square(e.x, e.y, e.rotation * tilesize / 2f);
+        }).followParent(true).layer(Layer.blockOver + 0.05f),
+
         eviscerationCharge = new Effect(150f, 1600f, e -> {
             Color[] colors = {Color.valueOf("D99F6B55"), Color.valueOf("E8D174aa"), Color.valueOf("F3E979"), Color.valueOf("ffffff")};
             float[] tscales = {1f, 0.7f, 0.5f, 0.2f};
