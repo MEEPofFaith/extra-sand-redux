@@ -40,17 +40,16 @@ public class ESRUnitTypes{
                 hidden = !ExtraSandRedux.everything();
                 flying = true;
                 lowAltitude = true;
-                mineSpeed = 100f;
+                mineSpeed = 10000f;
                 mineTier = 10000;
                 buildSpeed = 10000f;
                 drag = 0.05f;
                 speed = 3.55f;
                 rotateSpeed = 19f;
                 accel = 0.11f;
-                itemCapacity = 20000;
-                health = 200000f;
                 engineOffset = 5.5f;
                 hitSize = 11f;
+                bounded = false;
             }
 
             @Override

@@ -11,6 +11,7 @@ import extrasandredux.util.*;
 import extrasandredux.world.blocks.defence.turret.*;
 import mindustry.content.*;
 import mindustry.entities.*;
+import mindustry.entities.abilities.*;
 import mindustry.entities.bullet.*;
 import mindustry.game.EventType.*;
 import mindustry.mod.*;
@@ -95,9 +96,11 @@ public class ExtraSandRedux extends Mod{
 
     public static void godHood(UnitType ascending){
         int[] index = {0};
+        ascending.health = 0;
+        ascending.itemCapacity = 0;
         content.units().each(u -> u != ascending, u -> {
             u.weapons.each(w -> {
-                if(!w.bullet.killShooter){
+                if(!checkKillShooter(w.bullet)){
                     Weapon copy = w.copy();
                     ascending.weapons.add(copy);
                     if(w.otherSide != -1){
@@ -108,6 +111,11 @@ public class ExtraSandRedux extends Mod{
                     if(copy.rotate) copy.rotateSpeed = 360f;
                     copy.shootCone = 360f;
 
+                    if(Math.abs(copy.bullet.recoil) > 0){
+                        copy.bullet = copy.bullet.copy();
+                        copy.bullet.recoil = 0f;
+                    }
+
                     if(copy.shootStatus == StatusEffects.unmoving || copy.shootStatus == StatusEffects.slow){
                         copy.shootStatus = StatusEffects.none;
                     }
@@ -115,8 +123,22 @@ public class ExtraSandRedux extends Mod{
                 }
             });
 
-            u.abilities.each(a -> ascending.abilities.add(a));
+            u.abilities.each(a -> !(a instanceof MoveLightningAbility m) || !checkKillShooter(m.bullet), a -> ascending.abilities.add(a));
+
+            ascending.health += u.health;
+            ascending.itemCapacity += u.itemCapacity;
+            ascending.range = Math.max(ascending.range, u.range);
+            ascending.hitSize = Math.max(ascending.hitSize, u.hitSize);
         });
+    }
+
+    public static boolean checkKillShooter(BulletType b){
+        if(b == null || b == Bullets.damageLightning || b == Bullets.damageLightningGround) return false;
+        return b.killShooter ||
+            checkKillShooter(b.fragBullet) ||
+            checkKillShooter(b.intervalBullet) ||
+            checkKillShooter(b.lightningType) ||
+            b.spawnBullets.contains(ExtraSandRedux::checkKillShooter);
     }
 
     public static void setupEveryBullets(Turret base){
