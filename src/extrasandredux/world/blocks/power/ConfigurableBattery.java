@@ -43,6 +43,7 @@ public class ConfigurableBattery extends Battery{
             build.block.consPower.update(build);
             build.power.status = Math.min(amount, build.powerCapacity) / build.powerCapacity;
         });
+        config(Boolean.class, (ConfigurableBatteryBuild build, Boolean ignored) -> build.power.status = 0);
     }
 
     @Override
@@ -72,12 +73,13 @@ public class ConfigurableBattery extends Battery{
         public void buildConfiguration(Table table){
             powerCapacitySetting = powerCapacity;
             table.table(Styles.black5, t -> {
-                t.marginLeft(6f).marginRight(6f).right();
+                t.margin(6f);
                 t.field(String.valueOf(powerCapacitySetting), text -> {
                     powerCapacitySetting = Strings.parseFloat(text);
                 }).width(120).valid(text -> Strings.canParseFloat(text) && Strings.parseFloat(text) > 0).get().setFilter(TextFieldFilter.floatsOnly);
                 t.add(ESRUtls.statUnitName(StatUnit.powerUnits)).left();
-                t.button(Icon.save, () -> configure(powerCapacitySetting));
+                t.button(Icon.save, () -> configure(powerCapacitySetting)).padLeft(6);
+                t.button(Icon.trash, () -> configure(false)).tooltip("@esr-storage.delete-contents");
             });
         }
 

@@ -147,7 +147,7 @@ public class ConfigurableOverdriveProjector extends OverdriveProjector{
         @Override
         public void buildConfiguration(Table table){
             table.table(Styles.black5, t -> {
-                t.marginLeft(6f).marginRight(6f).right();
+                t.margin(6f);
                 t.add("+");
                 t.field(String.valueOf(boost), text -> {
                     float newBoost = boost;

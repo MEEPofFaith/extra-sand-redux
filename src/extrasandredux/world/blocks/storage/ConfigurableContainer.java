@@ -15,32 +15,25 @@ import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
 import mindustry.ui.*;
-import mindustry.world.*;
 import mindustry.world.blocks.storage.*;
 import mindustry.world.meta.*;
 
-import static mindustry.Vars.content;
+import static mindustry.Vars.*;
 
-public class ConfigurableContainer extends Block{
+public class ConfigurableContainer extends StorageBlock{
     protected static int storageCapacitySetting;
 
-    public int initialStoraeCapacity = 1000;
+    public int initialStorageCapacity = 1000;
     public TextureRegion colorRegion;
 
     public ConfigurableContainer(String name){
         super(name);
         ESRUtls.applySandboxDefaults(this, Category.effect);
 
-        acceptsItems = true;
-        hasItems = true;
-        solid = true;
-        update = false;
-        destructible = true;
         configurable = saveConfig = true;
         separateItemCapacity = true;
         group = BlockGroup.transportation;
         flags = EnumSet.of(BlockFlag.storage);
-        allowResupply = true;
 
         config(Integer.class, (ConfigurableContainerBuild build, Integer cap) -> {
             build.storageCapacity = cap;
@@ -75,12 +68,13 @@ public class ConfigurableContainer extends Block{
     }
 
     @Override
-    public boolean outputsItems(){
-        return false;
+    public void init(){
+        super.init();
+        coreMerge = false; //No compatibility, CoreBlocks don't check for dynamic item capacity.
     }
 
-    public class ConfigurableContainerBuild extends Building{
-        public int storageCapacity = initialStoraeCapacity;
+    public class ConfigurableContainerBuild extends StorageBuild{
+        public int storageCapacity = initialStorageCapacity;
         public boolean incinerate = false;
 
         @Override
@@ -95,7 +89,7 @@ public class ConfigurableContainer extends Block{
         @Override
         public void handleItem(Building source, Item item){
             if(incinerate && items.get(item) >= storageCapacity){
-                StorageBlock.incinerateEffect(this, source);
+                incinerateEffect(this, source);
                 return;
             }
             super.handleItem(source, item);
@@ -117,20 +111,22 @@ public class ConfigurableContainer extends Block{
             table.table(Styles.black5, t -> {
                 t.defaults().left();
                 t.margin(6f);
-                t.table(s -> {
-                    s.marginLeft(6f).marginRight(6f).right();
-                    s.field(String.valueOf(storageCapacitySetting), text -> {
-                        storageCapacitySetting = Strings.parseInt(text);
-                    }).width(120).valid(Strings::canParsePositiveInt).get().setFilter(TextFieldFilter.digitsOnly);
-                    s.add(ESRUtls.statUnitName(StatUnit.items)).left();
-                    s.button(Icon.save, () -> configure(storageCapacitySetting));
-                });
+                t.field(String.valueOf(storageCapacitySetting), text -> {
+                    storageCapacitySetting = Strings.parseInt(text);
+                }).width(120).valid(Strings::canParsePositiveInt).get().setFilter(TextFieldFilter.digitsOnly);
+                t.add(ESRUtls.statUnitName(StatUnit.items)).left();
+                t.button(Icon.save, () -> configure(storageCapacitySetting)).padLeft(6);
+                t.button(Icon.trash, () -> {
+                    int cap = storageCapacity;
+                    configure(0); //Delete contents
+                    configure(cap); //Restore original capacity
+                }).tooltip("@esr-storage.delete-contents");
                 t.row();
-                CheckBox box = new CheckBox("@esr-container.incinerate-overflow");
+                CheckBox box = new CheckBox("@esr-storage.incinerate-overflow");
                 box.changed(() -> configure(!incinerate));
                 box.setChecked(incinerate);
                 box.update(() -> box.setChecked(incinerate));
-                t.add(box);
+                t.add(box).colspan(4);
             });
         }
 

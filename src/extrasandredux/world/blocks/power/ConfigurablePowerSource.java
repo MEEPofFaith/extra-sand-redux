@@ -56,7 +56,7 @@ public class ConfigurablePowerSource extends PowerBlock{
         @Override
         public void buildConfiguration(Table table){
             table.table(Styles.black5, t -> {
-                t.marginLeft(6f).marginRight(6f).right();
+                t.margin(6f);
                 t.field(String.valueOf(powerProduction), text -> {
                     configure(Strings.parseFloat(text));
                 }).width(120).valid(Strings::canParsePositiveFloat).get().setFilter(TextFieldFilter.floatsOnly);

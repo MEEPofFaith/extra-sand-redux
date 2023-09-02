@@ -149,7 +149,7 @@ public class ConfigurableMendProjector extends MendProjector{
         @Override
         public void buildConfiguration(Table table){
             table.table(Styles.black5, t -> {
-                t.marginLeft(6f).marginRight(6f).right();
+                t.margin(6f);
                 t.field(String.valueOf(repairTime), text -> {
                     float newRepairTime = repairTime;
                     if(Strings.canParsePositiveFloat(text)){
