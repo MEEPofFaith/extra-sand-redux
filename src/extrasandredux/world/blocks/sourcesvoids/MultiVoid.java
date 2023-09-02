@@ -12,6 +12,7 @@ public class MultiVoid extends Block{
         ESRUtls.applySandboxDefaults(this, Category.effect);
 
         update = solid = acceptsItems = hasLiquids = true;
+        liquidCapacity = 10000f;
         group = BlockGroup.transportation;
     }
 

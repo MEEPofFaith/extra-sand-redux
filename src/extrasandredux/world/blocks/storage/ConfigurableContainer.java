@@ -33,6 +33,7 @@ public class ConfigurableContainer extends StorageBlock{
 
         configurable = saveConfig = true;
         separateItemCapacity = true;
+        itemCapacity = 10000;
         group = BlockGroup.transportation;
         flags = EnumSet.of(BlockFlag.storage);
 

@@ -46,7 +46,7 @@ public class ESRBlocks{
         multiSource, multiVoid, multiSourceVoid, multiEverythingSourceVoid,
 
         //Storage
-        configurableContainer, placeableCore,
+        configurableContainer, placeableCore, inputReader,
 
         //Effect
         configurableMendProjector, configurableOverdriveProjector;
@@ -173,6 +173,7 @@ public class ESRBlocks{
         configurableContainer = new ConfigurableContainer("configurable-container"){{
             size = 2;
         }};
+        inputReader = new InputReader("input-reader");
 
         //Effect
         configurableMendProjector = new ConfigurableMendProjector("infini-mender");

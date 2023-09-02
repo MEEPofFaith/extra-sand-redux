@@ -70,8 +70,6 @@ public class CapacityConfigurer extends PayloadBlock{
 
         @Override
         public void updateTile(){
-            super.updateTile();
-
             if(exporting){
                 moveOutPayload();
             }else if(moveInPayload()){
