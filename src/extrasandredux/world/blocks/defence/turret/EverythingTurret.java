@@ -214,11 +214,12 @@ public class EverythingTurret extends PowerTurret{
 
         @Override
         public BulletType useAmmo(){
-            return ExtraSandRedux.allBullets.get(selectedBullet).bulletType;
+            return peekAmmo();
         }
 
         @Override
         public BulletType peekAmmo(){
+            if(!ExtraSandRedux.everything) return Bullets.placeholder;
             return ExtraSandRedux.allBullets.get(selectedBullet).bulletType;
         }
 
