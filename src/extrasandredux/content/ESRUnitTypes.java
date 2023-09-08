@@ -37,7 +37,7 @@ public class ESRUnitTypes{
         allWeaponsUnit = EntityRegistry.content("god", UnitEntity.class, name -> new UnitType(name){
             {
                 alwaysUnlocked = true;
-                hidden = !ExtraSandRedux.everything();
+                hidden = !ExtraSandRedux.everything;
                 flying = true;
                 lowAltitude = true;
                 mineSpeed = 10000f;
@@ -66,7 +66,7 @@ public class ESRUnitTypes{
             public void draw(Unit unit){
                 super.draw(unit);
 
-                if(!ExtraSandRedux.everything()){
+                if(!ExtraSandRedux.everything){
                     Draw.z(Layer.overlayUI);
                     ESRDrawf.text(unit.x, unit.y, false, -1, unit.team.color, Core.bundle.get("esr-sandbox-disabled"));
                 }

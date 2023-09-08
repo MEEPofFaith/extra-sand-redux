@@ -26,6 +26,7 @@ import static mindustry.content.Blocks.*;
 public class ExtraSandRedux extends Mod{
     public static Seq<BulletData> allBullets = new Seq<>();
     public static int sandboxBlockHealthMultiplier = 1000000;
+    public static boolean everything = false;
 
     public ExtraSandRedux(){
         Events.on(ClientLoadEvent.class, e -> {
@@ -35,6 +36,9 @@ public class ExtraSandRedux extends Mod{
 
         // Load all assets once they're added into Vars.tree
         Events.on(FileTreeInitEvent.class, e -> app.post(ESRSounds::load));
+
+        // Check if everything turret/unit are enabled
+        everything = settings.getBool("esr-sandbox-everything", false);
 
         //Make sandbox blocks have a ton of health
         if(settings.getBool("esr-sandbox-health", false)){
@@ -67,7 +71,7 @@ public class ExtraSandRedux extends Mod{
     @Override
     public void init(){
         Events.on(ClientLoadEvent.class, e -> {
-            if(everything()){
+            if(everything){
                 godHood(ESRUnitTypes.allWeaponsUnit);
                 setupEveryBullets((EverythingTurret)ESRBlocks.everythingGun);
             }
@@ -80,10 +84,6 @@ public class ExtraSandRedux extends Mod{
 
         ESRUnitTypes.load();
         ESRBlocks.load();
-    }
-
-    public static boolean everything(){
-        return settings.getBool("esr-sandbox-everything", false);
     }
 
     private void loadSettings(){

@@ -38,7 +38,7 @@ public class EverythingTurret extends PowerTurret{
         super(name);
         requirements(
             Category.turret,
-            ExtraSandRedux.everything() ? BuildVisibility.sandboxOnly : BuildVisibility.hidden,
+            ExtraSandRedux.everything ? BuildVisibility.sandboxOnly : BuildVisibility.hidden,
             ItemStack.empty
         );
         alwaysUnlocked = true;
@@ -95,11 +95,13 @@ public class EverythingTurret extends PowerTurret{
 
         @Override
         public void updateTile(){
-            if(!ExtraSandRedux.everything()) return;
+            unit.ammo(0);
+            if(!ExtraSandRedux.everything) return;
 
             super.updateTile();
 
             float levelf = levelf();
+            unit.ammo(levelf * unit.type().ammoCapacity);
 
             for(int i = 0; i < swirlEffects; i++){
                 if(Mathf.chanceDelta(1f)){
@@ -136,7 +138,7 @@ public class EverythingTurret extends PowerTurret{
             Drawf.shadow(region, x - elevation, y - elevation, drawRot);
             Drawf.spinSprite(region, x, y, drawRot);
 
-            if(!ExtraSandRedux.everything()){
+            if(!ExtraSandRedux.everything){
                 Draw.z(Layer.overlayUI);
                 ESRDrawf.text(x, y + size * tilesize / 2f + 3, team.color, Core.bundle.get("esr-sandbox-disabled"));
             }
