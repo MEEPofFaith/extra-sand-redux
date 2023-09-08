@@ -20,6 +20,7 @@ import mindustry.world.*;
 import mindustry.world.blocks.defense.turrets.*;
 
 import static arc.Core.*;
+import static extrasandredux.content.ESRBlocks.*;
 import static mindustry.Vars.*;
 import static mindustry.content.Blocks.*;
 
@@ -49,17 +50,18 @@ public class ExtraSandRedux extends Mod{
                     liquidSource, liquidVoid,
                     powerSource, powerVoid,
                     payloadSource, payloadVoid,
-                    heatSource/*,
+                    heatSource,
 
-                    //ExS
+                    //ESR
                     eviscerator, everythingGun,
-                    everythingItemSource, sandDriver,
+                    everythingItemSource,
                     everythingLiquidSource,
-                    strobeNode, strobeInf, strobeBoost,
-                    infiniHeatSource,
-                    godFactory, capBlock,
+                    configurablePowerSource, configurablePowerVoid, configurableBattery, smartPowerSource,
+                    configurableHeatSource,
+                    boxedFlarogus, capBlock,
+                    configurableContainer, inputReader,
                     multiSource, multiVoid, multiSourceVoid, multiEverythingSourceVoid,
-                    infiniMender, infiniOverdrive*/
+                    configurableMendProjector, configurableOverdriveProjector
                 );
                 //Can't use b.buildVisibility == BuildVisibility.sandboxOnly because some things, like scrap walls, are also sandbox only.
 
