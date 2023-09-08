@@ -33,7 +33,7 @@ public class ConfigurableBattery extends Battery{
         configurable = saveConfig = true;
         update = true;
 
-        drawer = new DrawMulti(new DrawDefault(), new DrawStrobePower(), new DrawRegion("-top"), new DrawStrobe("-strobe"));
+        drawer = new DrawMulti(new DrawDefault(), new DrawStrobePower(), new DrawRegion("-top"), new DrawStrobe());
 
         consumeBufferedPowerDynamic((ConfigurableBatteryBuild build) -> build.powerCapacity);
 

@@ -13,6 +13,10 @@ public class DrawStrobe extends DrawRegion{
         drawPlan = false;
     }
 
+    public DrawStrobe(){
+        this("-strobe");
+    }
+
     @Override
     public void draw(Building build){
         ESRDrawf.setStrobeColor();

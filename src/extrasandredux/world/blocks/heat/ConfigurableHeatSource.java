@@ -7,6 +7,7 @@ import arc.struct.*;
 import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.util.*;
+import extrasandredux.world.draw.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
 import mindustry.type.*;
@@ -17,7 +18,7 @@ import mindustry.world.draw.*;
 import mindustry.world.meta.*;
 
 public class ConfigurableHeatSource extends Block{
-    public DrawBlock drawer = new DrawMulti(new DrawDefault(), new DrawHeatOutput());
+    public DrawBlock drawer = new DrawMulti(new DrawDefault(), new DrawStrobe(), new DrawHeatOutput());
 
     public ConfigurableHeatSource(String name){
         super(name);
