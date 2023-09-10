@@ -20,6 +20,7 @@ public class ESRUtls{
 
     public static float bulletDamage(BulletType b, float lifetime){
         if(b.spawnUnit != null){ //Missile unit damage
+            if(b.spawnUnit.weapons.isEmpty()) return 0f;
             Weapon uW = b.spawnUnit.weapons.first();
             return bulletDamage(uW.bullet, uW.bullet.lifetime) * uW.shoot.shots;
         }else{
