@@ -1,27 +1,11 @@
-displayName: "Extra Sand in the Sandbox - Redux"
-
-#the internal name of your mod
-name: "extra-sand-redux"
-
-#your name
-author: "MEEP of Faith"
-
-#the fully qualified main class of the mod
-main: "extrasandredux.ExtraSandRedux"
-
-#the mod description as seen in the mod dialog
-description: "A plethora of sandbox-only blocks dedicated to both fun and testing purposes."
-
-#short description displayed under the title
-subtitle: "It returns."
-
-#the mod version
-version: 0.0
-
-#the minimum game build required to run this mod
-minGameVersion: 145.1
-
-#this is a java mod
-java: true
-
-repo: MEEPofFaith/extra-sand-redux
+{
+    "displayName": "Extra Sand in the Sandbox - Redux",
+    "subtitle": "It returns",
+    "description": "A plethora of sandbox-only blocks dedicated for both fun and testing purposes.",
+    "version": 0.0,
+    "minGameVersion": 146,
+    "author": "MEEP of Faith",
+    "java": true,
+    "main": "extrasandredux.ExtraSandRedux",
+    "repo": "MEEPofFaith/extra-sand-redux"
+}
