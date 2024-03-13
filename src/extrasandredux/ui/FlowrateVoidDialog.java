@@ -5,8 +5,8 @@ import arc.graphics.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
-import extrasandredux.world.blocks.storage.InputReader.*;
-import extrasandredux.world.blocks.storage.InputReader.InputReaderBuild.*;
+import extrasandredux.world.blocks.storage.FlowrateVoid.*;
+import extrasandredux.world.blocks.storage.FlowrateVoid.FlowrateVoidBuild.*;
 import mindustry.ctype.*;
 import mindustry.game.EventType.*;
 import mindustry.gen.*;
@@ -19,13 +19,13 @@ import mindustry.world.meta.*;
 import static arc.Core.*;
 import static mindustry.Vars.*;
 
-public class InputReaderDialog extends BaseDialog{
+public class FlowrateVoidDialog extends BaseDialog{
     private static final int cols = mobile ? 1 : 3;
     private final Table info = new Table();
-    private InputReaderBuild build;
+    private FlowrateVoidBuild build;
     private int col = 0;
 
-    public InputReaderDialog(){
+    public FlowrateVoidDialog(){
         super("@esr-flowrate-reader.title");
         shouldPause = false;
         addCloseButton();
@@ -39,7 +39,7 @@ public class InputReaderDialog extends BaseDialog{
         Events.on(GameOverEvent.class, e -> hide());
     }
 
-    public void show(InputReaderBuild build){
+    public void show(FlowrateVoidBuild build){
         this.build = build;
         show();
     }

@@ -4,6 +4,7 @@ import arc.*;
 import arc.audio.*;
 import arc.struct.*;
 import arc.util.*;
+import blackhole.graphics.*;
 import extrasandredux.content.*;
 import extrasandredux.gen.entities.*;
 import extrasandredux.graphics.*;
@@ -36,7 +37,9 @@ public class ExtraSandRedux extends Mod{
         });
 
         // Load all assets once they're added into Vars.tree
-        Events.on(FileTreeInitEvent.class, e -> app.post(ESRSounds::load));
+        Events.on(FileTreeInitEvent.class, e -> {
+            app.post(ESRSounds::load);
+        });
 
         // Check if everything turret/unit are enabled
         everything = settings.getBool("esr-sandbox-everything", false);

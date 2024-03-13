@@ -10,6 +10,7 @@ import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
+import blackhole.graphics.*;
 import extrasandredux.ui.*;
 import extrasandredux.util.*;
 import mindustry.core.*;
@@ -23,11 +24,11 @@ import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
 
-public class InputReader extends PayloadVoid{
-    protected static InputReaderDialog inputReaderDialog;
+public class FlowrateVoid extends PayloadVoid{
+    protected static FlowrateVoidDialog flowrateVoidDialog;
     protected static float addTimeSetting;
 
-    public InputReader(String name){
+    public FlowrateVoid(String name){
         super(name);
         ESRUtls.applySandboxDefaults(this, Category.effect);
 
@@ -39,11 +40,11 @@ public class InputReader extends PayloadVoid{
         itemCapacity = 10000;
         liquidCapacity = 10000f;
 
-        config(Float.class, (InputReaderBuild build, Float time) -> {
+        config(Float.class, (FlowrateVoidBuild build, Float time) -> {
             build.readingTimer += time * 60f;
             build.maxTime = build.readingTimer;
         });
-        config(Boolean.class, (InputReaderBuild build, Boolean ignored) -> {
+        config(Boolean.class, (FlowrateVoidBuild build, Boolean ignored) -> {
             build.readingTimer = 0f;
             build.totalTime = 0f;
             build.items.clear();
@@ -58,7 +59,7 @@ public class InputReader extends PayloadVoid{
     public void init(){
         super.init();
 
-        if(!headless && inputReaderDialog == null) inputReaderDialog = new InputReaderDialog();
+        if(!headless && flowrateVoidDialog == null) flowrateVoidDialog = new FlowrateVoidDialog();
     }
 
     @Override
@@ -86,14 +87,14 @@ public class InputReader extends PayloadVoid{
         removeBar("items");
         removeBar("liquid");
 
-        addBar("time", (InputReaderBuild entity) -> new Bar(
+        addBar("time", (FlowrateVoidBuild entity) -> new Bar(
             () -> UI.formatTime(entity.readingTimer) + " | " + UI.formatTime(entity.totalTime),
             () -> Pal.bar,
             () -> entity.readingTimer / entity.maxTime
         ));
     }
 
-    public class InputReaderBuild extends PayloadBlockBuild<Payload>{
+    public class FlowrateVoidBuild extends PayloadBlockBuild<Payload>{
         public float maxTime = 1f;
         public float readingTimer = 0f;
         public float totalTime = 0f;
@@ -116,6 +117,8 @@ public class InputReader extends PayloadVoid{
 
             Draw.z(Layer.blockOver);
             drawPayload();
+
+            BlackHoleRenderer.addBlackHole(x, y, size / 2f, size * 12f, team.color);
         }
 
         @Override
@@ -125,7 +128,7 @@ public class InputReader extends PayloadVoid{
                 totalTime += Time.delta;
                 totalPowerProduced += power.graph.getPowerProduced();
                 totalPowerConsumed += power.graph.getPowerNeeded();
-                if(inputReaderDialog != null && inputReaderDialog.isShown()) inputReaderDialog.rebuild();
+                if(flowrateVoidDialog != null && flowrateVoidDialog.isShown()) flowrateVoidDialog.rebuild();
             }
 
             if(moveInPayload(false)){
@@ -180,7 +183,7 @@ public class InputReader extends PayloadVoid{
                     addTimeSetting = 0f;
                     f.setText(String.valueOf(addTimeSetting));
                 }).padLeft(6f);
-                t.button(Icon.zoom, () -> inputReaderDialog.show(this));
+                t.button(Icon.zoom, () -> flowrateVoidDialog.show(this));
                 t.button(Icon.refresh, () -> configure(false)).tooltip("@esr-flowrate-reader.reset");
             });
         }
