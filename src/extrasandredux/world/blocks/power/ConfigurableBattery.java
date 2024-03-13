@@ -10,7 +10,6 @@ import arc.util.io.*;
 import extrasandredux.util.*;
 import extrasandredux.world.consumers.*;
 import extrasandredux.world.draw.*;
-import mindustry.core.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
