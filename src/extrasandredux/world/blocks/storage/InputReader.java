@@ -2,7 +2,9 @@ package extrasandredux.world.blocks.storage;
 
 import arc.*;
 import arc.func.*;
+import arc.graphics.*;
 import arc.graphics.g2d.*;
+import arc.scene.style.*;
 import arc.scene.ui.*;
 import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
@@ -10,7 +12,6 @@ import arc.struct.*;
 import arc.util.*;
 import extrasandredux.ui.*;
 import extrasandredux.util.*;
-import extrasandredux.world.meta.*;
 import mindustry.core.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -90,36 +91,6 @@ public class InputReader extends PayloadVoid{
             () -> Pal.bar,
             () -> entity.readingTimer / entity.maxTime
         ));
-        addBar("totalItems", (InputReaderBuild entity) -> new Bar(
-            () -> getBarDisplay(entity.items.total(), entity.getTotalSeconds(), StatUnit.itemsSecond),
-            () -> Pal.items,
-            entity::barFill
-        ));
-        addBar("totalLiquids", (InputReaderBuild entity) -> new Bar(
-            () -> getBarDisplay(entity.getTotalLiquids(), entity.getTotalSeconds(), StatUnit.liquidSecond),
-            () -> Pal.items,
-            entity::barFill
-        ));
-        addBar("totalPayloads", (InputReaderBuild entity) -> new Bar(
-            () -> getBarDisplay(entity.payloads.total(), entity.getTotalSeconds(), ESRStatUnit.payloadSecond),
-            () -> Pal.items,
-            entity::barFill
-        ));
-        addBar("totalPowerProduced", (InputReaderBuild entity) -> new Bar(
-            () -> getBarDisplay(entity.totalPowerProduced, entity.getTotalSeconds(), ESRStatUnit.powerSecProduced),
-            () -> Pal.powerBar,
-            entity::barFill
-        ));
-        addBar("totalPowerConsumed", (InputReaderBuild entity) -> new Bar(
-            () -> getBarDisplay(entity.totalPowerConsumed, entity.getTotalSeconds(), ESRStatUnit.powerSecConsumed),
-            () -> Pal.powerBar,
-            entity::barFill
-        ));
-    }
-
-    public String getBarDisplay(float totalAmount, float totalTime, StatUnit unit){
-        if(totalTime <= 0) return Core.bundle.get("esr-flowrate-reader.no-time");
-        return ESRUtls.round(totalAmount / totalTime) + " " + unit.localized();
     }
 
     public class InputReaderBuild extends PayloadBlockBuild<Payload>{
@@ -226,6 +197,35 @@ public class InputReader extends PayloadVoid{
 
         public float barFill(){
             return totalTime > 0f ? 1f : 0f;
+        }
+
+        @Override
+        public void display(Table table){
+            super.display(table);
+
+            table.row();
+            table.table(t -> {
+                t.left();
+                t.image(new TextureRegionDrawable(Icon.distribution)).size(32).scaling(Scaling.fit);
+                t.label(() -> labelText(items.total())).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
+
+                t.image(new TextureRegionDrawable(Icon.liquid)).size(32).scaling(Scaling.fit);
+                t.label(() -> labelText(getTotalLiquids())).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
+
+                t.image(new TextureRegionDrawable(Icon.units)).size(32).scaling(Scaling.fit);
+                t.label(() -> labelText(payloads.total())).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
+
+                t.image(new TextureRegionDrawable(Icon.power)).size(32).scaling(Scaling.fit).color(Pal.accent);
+                t.label(() -> labelText(totalPowerProduced)).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
+
+                t.image(new TextureRegionDrawable(Icon.power)).size(32).scaling(Scaling.fit).color(Pal.remove);
+                t.label(() -> labelText(totalPowerConsumed)).wrap().width(230f).padLeft(2).color(Color.lightGray);
+            }).left();
+        }
+
+        public String labelText(float value){
+            if(totalTime <= 0) return Core.bundle.get("esr-flowrate-reader.no-time");
+            return ESRUtls.round(value / totalTime * 60f) + StatUnit.perSecond.localized();
         }
 
         @Override
