@@ -1,26 +1,29 @@
 package extrasandredux.world.blocks.storage;
 
 import arc.*;
-import arc.audio.*;
+import arc.func.*;
 import arc.graphics.g2d.*;
 import arc.scene.ui.*;
 import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
+import arc.struct.*;
 import arc.util.*;
+import extrasandredux.ui.*;
 import extrasandredux.util.*;
 import extrasandredux.world.meta.*;
-import mindustry.*;
-import mindustry.content.*;
 import mindustry.core.*;
-import mindustry.entities.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
 import mindustry.ui.*;
+import mindustry.world.*;
 import mindustry.world.blocks.payloads.*;
 import mindustry.world.meta.*;
 
+import static mindustry.Vars.*;
+
 public class InputReader extends PayloadVoid{
+    protected static InputReaderDialog inputReaderDialog;
     protected static float addTimeSetting;
 
     public InputReader(String name){
@@ -46,7 +49,15 @@ public class InputReader extends PayloadVoid{
             build.liquids.clear();
             build.totalPowerProduced = build.totalPowerConsumed = 0f;
             build.payloads.clear();
+            build.payloadData.clear();
         });
+    }
+
+    @Override
+    public void init(){
+        super.init();
+
+        if(!headless && inputReaderDialog == null) inputReaderDialog = new InputReaderDialog();
     }
 
     @Override
@@ -57,6 +68,14 @@ public class InputReader extends PayloadVoid{
     @Override
     public boolean isAccessible(){ //Dont show inventory
         return false;
+    }
+
+    @Override
+    public void setStats(){
+        super.setStats();
+
+        stats.remove(Stat.itemCapacity);
+        stats.remove(Stat.liquidCapacity);
     }
 
     @Override
@@ -87,12 +106,12 @@ public class InputReader extends PayloadVoid{
             entity::barFill
         ));
         addBar("totalPowerProduced", (InputReaderBuild entity) -> new Bar(
-            () -> getBarDisplay(entity.totalPowerProduced, entity.getTotalSeconds(), StatUnit.powerSecond),
+            () -> getBarDisplay(entity.totalPowerProduced, entity.getTotalSeconds(), ESRStatUnit.powerSecProduced),
             () -> Pal.powerBar,
             entity::barFill
         ));
         addBar("totalPowerConsumed", (InputReaderBuild entity) -> new Bar(
-            () -> getBarDisplay(entity.totalPowerConsumed, entity.getTotalSeconds(), StatUnit.powerSecond),
+            () -> getBarDisplay(entity.totalPowerConsumed, entity.getTotalSeconds(), ESRStatUnit.powerSecConsumed),
             () -> Pal.powerBar,
             entity::barFill
         ));
@@ -107,8 +126,9 @@ public class InputReader extends PayloadVoid{
         public float maxTime = 1f;
         public float readingTimer = 0f;
         public float totalTime = 0f;
-        public float totalPowerProduced, totalPowerConsumed;
+        public float totalPowerProduced, totalPowerConsumed, totalPowerTransferred;
         public PayloadSeq payloads = new PayloadSeq();
+        public ObjectMap<Block, PayloadInputData> payloadData = new ObjectMap<>();
 
         @Override
         public void draw(){
@@ -134,6 +154,7 @@ public class InputReader extends PayloadVoid{
                 totalTime += Time.delta;
                 totalPowerProduced += power.graph.getPowerProduced();
                 totalPowerConsumed += power.graph.getPowerNeeded();
+                if(inputReaderDialog != null && inputReaderDialog.isShown()) inputReaderDialog.rebuild();
             }
 
             if(moveInPayload(false)){
@@ -144,8 +165,24 @@ public class InputReader extends PayloadVoid{
         public void consumePayload(){
             if(readingTimer > 0f){
                 if(payload instanceof BuildPayload p){
-                    if(p.block().hasItems) items.add(p.build.items);
-                    if(p.block().hasLiquids) p.build.liquids.each((liquid, amount) -> liquids.add(liquid, amount));
+                    PayloadInputData data = payloadData.get(p.block(), PayloadInputData::new);
+                    if(p.block().hasItems){
+                        p.build.items.each((item, amount) -> {
+                            items.add(item, amount);
+                            data.addI(item, amount);
+                        });
+                    }
+                    if(p.block().hasLiquids){
+                        p.build.liquids.each((liquid, amount) -> {
+                            liquids.add(liquid, amount);
+                            data.addL(liquid, amount);
+                        });
+                    }
+                    if(p.block().consPower != null && p.block().consPower.buffered){
+                        float pow = p.build.power.status * p.block().consPower.capacity;
+                        totalPowerTransferred += pow;
+                        data.addP(pow);
+                    }
                 }
                 payloads.add(payload.content());
             }
@@ -172,9 +209,7 @@ public class InputReader extends PayloadVoid{
                     addTimeSetting = 0f;
                     f.setText(String.valueOf(addTimeSetting));
                 }).padLeft(6f);
-                t.button(Icon.zoom, () -> {
-                    //someDialog.show(this);
-                }); //TODO dialog
+                t.button(Icon.zoom, () -> inputReaderDialog.show(this));
                 t.button(Icon.refresh, () -> configure(false)).tooltip("@esr-flowrate-reader.reset");
             });
         }
@@ -224,6 +259,56 @@ public class InputReader extends PayloadVoid{
         public void handleLiquid(Building source, Liquid liquid, float amount){
             if(readingTimer <= 0) return;
             super.handleLiquid(source, liquid, amount);
+        }
+
+        public class PayloadInputData{
+            public int[] items = new int[content.items().size];
+            public float[] liquids = new float[content.liquids().size];
+            public float power;
+
+            public void addI(Item item, int amount){
+                items[item.id] += amount;
+            }
+
+            public void addL(Liquid liquid, float amount){
+                liquids[liquid.id] += amount;
+            }
+
+            public void addP(float amount){
+                power += amount;
+            }
+
+            public boolean hasItems(){
+                for(int i : items){
+                    if(i > 0) return true;
+                }
+                return false;
+            }
+
+            public boolean hasLiquids(){
+                for(float l : liquids){
+                    if(l > 0) return true;
+                }
+                return false;
+            }
+
+            public boolean hasPower(){
+                return power > 0;
+            }
+
+            public void eachItem(Cons2<Item, Integer> cons){
+                for(int i = 0; i < items.length; i++){
+                    if(items[i] == 0) continue;
+                    cons.get(content.item(i), items[i]);
+                }
+            }
+
+            public void eachLiquid(Cons2<Liquid, Float> cons){
+                for(int i = 0; i < liquids.length; i++){
+                    if(liquids[i] == 0) continue;
+                    cons.get(content.liquid(i), liquids[i]);
+                }
+            }
         }
     }
 }
