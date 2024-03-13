@@ -58,6 +58,11 @@ public class InputReaderDialog extends BaseDialog{
 
         ESRElements.divider(info, "@content.item.name", Pal.accent);
         info.table(items -> {
+            items.table(t -> {
+                t.add(bundle.format("esr-flowrate-reader.total", build.items.total())).left();
+                t.add(perSec(build.items.total())).padLeft(24);
+            }).colspan(cols).left().row();
+
             col = 0;
             build.items.each((item, amount) -> {
                 if(amount == 0) return;
@@ -87,10 +92,16 @@ public class InputReaderDialog extends BaseDialog{
     }
 
     private void buildLiquids(){
-        if((build.liquids.sum((l, a) -> a) <= 0.01f)) return;
+        float totalAmount = build.getTotalLiquids();
+        if((totalAmount <= 0.01f)) return;
 
         ESRElements.divider(info, "@content.liquid.name", Pal.accent);
         info.table(fluids -> {
+            fluids.table(t -> {
+                t.add(bundle.format("esr-flowrate-reader.total", StatValues.fixValue(totalAmount))).left();
+                t.add(perSec(totalAmount)).padLeft(24);
+            }).colspan(cols).left().row();
+
             col = 0;
             build.liquids.each((liquid, amount) -> {
                 if(amount == 0) return;
@@ -131,8 +142,10 @@ public class InputReaderDialog extends BaseDialog{
             power.add(perSec(build.totalPowerProduced)).pad(10f).row();
             power.add(bundle.format("esr-flowrate-reader.powerconsumed", StatValues.fixValue(build.totalPowerConsumed)));
             power.add(perSec(build.totalPowerConsumed)).pad(10f).row();
-            power.add(bundle.format("esr-flowrate-reader.powertransferred", StatValues.fixValue(build.totalPowerTransferred)));
-            power.add(perSec(build.totalPowerTransferred)).pad(10f).row();
+            if(build.totalPowerTransferred > 0.01f){
+                power.add(bundle.format("esr-flowrate-reader.powertransferred", StatValues.fixValue(build.totalPowerTransferred)));
+                power.add(perSec(build.totalPowerTransferred)).pad(10f);
+            }
         }).growX().left().pad(5).row();
     }
 
@@ -141,6 +154,11 @@ public class InputReaderDialog extends BaseDialog{
 
         ESRElements.divider(info, "@esr-flowrate-reader.payloads", Pal.accent);
         info.table(payloads -> {
+            payloads.table(t -> {
+                t.add(bundle.format("esr-flowrate-reader.total", build.payloads.total())).left();
+                t.add(perSec(build.payloads.total())).padLeft(24);
+            }).colspan(cols).left().row();
+
             col = 0;
             ObjectIntMap<UnlockableContent> payloadMap = Reflect.get(build.payloads, "payloads");
             Seq<UnlockableContent> keys = payloadMap.keys().toArray();
@@ -194,7 +212,7 @@ public class InputReaderDialog extends BaseDialog{
                                 }).growX();
                                 d.add(perSec(data.power)).right();
                             }
-                        }).colspan(3).left().growX().pad(10f).padLeft(25 + 12);
+                        }).colspan(3).left().growX().pad(10f).padLeft(24);
                     }
                 }).uniformX().growX().fill().pad(5).top();
 
