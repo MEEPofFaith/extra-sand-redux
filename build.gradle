@@ -106,6 +106,7 @@ configure(rootProject){
         // Depend on Mindustry/Arc classpath.
         compileOnly "${mindustry(':core')}"
         compileOnly "${arc(':arc-core')}"
+
         compileOnly "${blackhole(':MindustryBlackHoleRenderer')}"
     }
 

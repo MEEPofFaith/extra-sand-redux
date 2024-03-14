@@ -1,8 +1,10 @@
 package extrasandredux.util;
 
 import arc.util.*;
+import mindustry.*;
 import mindustry.core.*;
 import mindustry.entities.bullet.*;
+import mindustry.mod.Mods.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
@@ -59,5 +61,10 @@ public class ESRUtls{
         }else{
             return Strings.autoFixed(f, 2);
         }
+    }
+
+    public static boolean modEnabled(String name){
+        LoadedMod mod = Vars.mods.getMod(name);
+        return mod != null && mod.isSupported() && mod.enabled();
     }
 }
