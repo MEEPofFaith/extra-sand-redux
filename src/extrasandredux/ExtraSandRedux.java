@@ -2,6 +2,7 @@ package extrasandredux;
 
 import arc.*;
 import arc.audio.*;
+import arc.func.*;
 import arc.struct.*;
 import arc.util.*;
 import blackhole.graphics.*;
@@ -16,6 +17,7 @@ import mindustry.entities.abilities.*;
 import mindustry.entities.bullet.*;
 import mindustry.game.EventType.*;
 import mindustry.mod.*;
+import mindustry.mod.Mods.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.defense.turrets.*;
@@ -76,6 +78,14 @@ public class ExtraSandRedux extends Mod{
     @Override
     public void init(){
         Events.on(ClientLoadEvent.class, e -> {
+            if(!headless){
+                LoadedMod esr = mods.locateMod("extra-sand-redux");
+                Func<String, String> getModBundle = value -> bundle.get("mod." + esr.meta.name + "." + value);
+
+                esr.meta.description = getModBundle.get("description");
+                esr.meta.subtitle = getModBundle.get("subtitle");
+            }
+
             if(everything){
                 godHood(ESRUnitTypes.allWeaponsUnit);
                 setupEveryBullets((EverythingTurret)ESRBlocks.everythingGun);
