@@ -131,7 +131,7 @@ public class FlowrateVoidDialog extends BaseDialog{
     }
 
     private void buildPower(){
-        if((build.totalPowerProduced + build.totalPowerConsumed + build.totalPowerTransferred) <= 0.01f) return;
+        if((build.totalPowerProduced + build.totalPowerConsumed + build.totalPowerTransported) <= 0.01f) return;
 
         ESRElements.divider(info, "@bar.power", Pal.accent);
         info.table(Styles.grayPanel, power -> {
@@ -142,9 +142,13 @@ public class FlowrateVoidDialog extends BaseDialog{
             power.add(perSec(build.totalPowerProduced)).pad(10f).row();
             power.add(bundle.format("esr-flowrate-reader.powerconsumed", StatValues.fixValue(build.totalPowerConsumed)));
             power.add(perSec(build.totalPowerConsumed)).pad(10f).row();
-            if(build.totalPowerTransferred > 0.01f){
-                power.add(bundle.format("esr-flowrate-reader.powertransferred", StatValues.fixValue(build.totalPowerTransferred)));
-                power.add(perSec(build.totalPowerTransferred)).pad(10f);
+            float net = build.totalPowerProduced - build.totalPowerConsumed;
+            power.add(bundle.format("esr-flowrate-reader.powernet", StatValues.fixValue(net)));
+            power.add((net > 0 ? "[stat]+" : "[negstat]") + StatValues.fixValue(net / build.totalTime * 60f) + StatUnit.perSecond.localized()).pad(10f).row();
+
+            if(build.totalPowerTransported > 0.01f){
+                power.add(bundle.format("esr-flowrate-reader.powertransported", StatValues.fixValue(build.totalPowerTransported)));
+                power.add(perSec(build.totalPowerTransported)).pad(10f);
             }
         }).growX().left().pad(5).row();
     }
@@ -231,6 +235,6 @@ public class FlowrateVoidDialog extends BaseDialog{
     }
 
     private String perSec(float value){
-        return "[accent]" + StatValues.fixValue(value / build.totalTime * 60f) + StatUnit.perSecond.localized();
+        return "[stat]" + StatValues.fixValue(value / build.totalTime * 60f) + StatUnit.perSecond.localized();
     }
 }

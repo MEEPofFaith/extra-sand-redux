@@ -113,7 +113,7 @@ public class FlowrateVoid extends PayloadVoid{
         public float maxTime = 1f;
         public float readingTimer = 0f;
         public float totalTime = 0f;
-        public float totalPowerProduced, totalPowerConsumed, totalPowerTransferred;
+        public float totalPowerProduced, totalPowerConsumed, totalPowerTransported;
         public float warmup;
         public PayloadSeq payloads = new PayloadSeq();
         public ObjectMap<Block, PayloadInputData> payloadData = new ObjectMap<>();
@@ -181,7 +181,7 @@ public class FlowrateVoid extends PayloadVoid{
                     }
                     if(p.block().consPower != null && p.block().consPower.buffered){
                         float pow = p.build.power.status * p.block().consPower.capacity;
-                        totalPowerTransferred += pow;
+                        totalPowerTransported += pow;
                         data.addP(pow);
                     }
                 }
