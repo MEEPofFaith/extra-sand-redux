@@ -17,6 +17,7 @@ import extrasandredux.ui.*;
 import extrasandredux.util.*;
 import mindustry.core.*;
 import mindustry.entities.*;
+import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
@@ -24,6 +25,7 @@ import mindustry.ui.*;
 import mindustry.world.*;
 import mindustry.world.blocks.payloads.*;
 import mindustry.world.meta.*;
+import mindustry.world.modules.*;
 
 import static mindustry.Vars.*;
 
@@ -117,6 +119,13 @@ public class FlowrateVoid extends PayloadVoid{
         public float warmup;
         public PayloadSeq payloads = new PayloadSeq();
         public ObjectMap<Block, PayloadInputData> payloadData = new ObjectMap<>();
+
+        @Override
+        public Building create(Block block, Team team){
+            super.create(block, team);
+            if(block.hasLiquids) liquids = new EmptyLiquidModule();
+            return self();
+        }
 
         @Override
         public void draw(){
@@ -339,6 +348,13 @@ public class FlowrateVoid extends PayloadVoid{
                     cons.get(content.liquid(i), liquids[i]);
                 }
             }
+        }
+    }
+
+    public static class EmptyLiquidModule extends LiquidModule{
+        @Override
+        public float get(Liquid liquid){
+            return 0f; //Return 0 so that liquid flow rate is always the same,
         }
     }
 }
