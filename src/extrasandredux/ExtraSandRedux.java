@@ -5,7 +5,6 @@ import arc.audio.*;
 import arc.func.*;
 import arc.struct.*;
 import arc.util.*;
-import blackhole.graphics.*;
 import extrasandredux.content.*;
 import extrasandredux.gen.entities.*;
 import extrasandredux.graphics.*;

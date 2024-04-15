@@ -72,7 +72,7 @@ public class FlowrateVoid extends PayloadVoid{
         super.init();
 
         if(!headless && flowrateVoidDialog == null) flowrateVoidDialog = new FlowrateVoidDialog();
-        if(swirlEffect == null) swirlEffect = new SwirlEffect(60f, 6, 2f, 90, 270, true);
+        if(swirlEffect == null) swirlEffect = new SwirlEffect(60f, 6, 2f, 90, 270);
         if(horizonRad < 0) horizonRad = size * 2f / 3f;
         if(edgeRad < 0) edgeRad = size * 12f;
 
