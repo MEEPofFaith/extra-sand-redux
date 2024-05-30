@@ -5,6 +5,7 @@ import extrasandredux.world.blocks.defence.*;
 import extrasandredux.world.blocks.defence.turret.*;
 import extrasandredux.world.blocks.effect.*;
 import extrasandredux.world.blocks.heat.*;
+import extrasandredux.world.blocks.logic.*;
 import extrasandredux.world.blocks.payload.*;
 import extrasandredux.world.blocks.power.*;
 import extrasandredux.world.blocks.sourcesvoids.*;
@@ -49,7 +50,10 @@ public class ESRBlocks{
         configurableContainer, placeableCore, inputReader,
 
         //Effect
-        configurableMendProjector, configurableOverdriveProjector;
+        configurableMendProjector, configurableOverdriveProjector,
+
+        //Logic
+        turretController;
 
     public static void load(){
         //Turret
@@ -178,5 +182,8 @@ public class ESRBlocks{
         //Effect
         configurableMendProjector = new ConfigurableMendProjector("infini-mender");
         configurableOverdriveProjector = new ConfigurableOverdriveProjector("infini-overdrive");
+
+        //Logic
+        turretController = new TurretController("turret-controller");
     }
 }
