@@ -1,5 +1,7 @@
 package extrasandredux.world.blocks.logic;
 
+import arc.*;
+import arc.graphics.*;
 import arc.graphics.g2d.*;
 import arc.math.geom.*;
 import arc.scene.ui.*;
@@ -8,6 +10,7 @@ import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.util.*;
+import mindustry.entities.units.*;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -20,6 +23,9 @@ import mindustry.world.blocks.defense.turrets.Turret.*;
 import static mindustry.Vars.*;
 
 public class TurretController extends Block{
+    protected TextureRegion modeRegion;
+    protected TextureRegion plugRegion0, plugRegion1;
+
     public TurretController(String name){
         super(name);
         ESRUtls.applySandboxDefaults(this, Category.logic);
@@ -27,6 +33,7 @@ public class TurretController extends Block{
         update = true;
         solid = true;
         rotate = true;
+        rotateDraw = false;
         configurable = true;
         saveConfig = false;
 
@@ -39,10 +46,41 @@ public class TurretController extends Block{
     }
 
     @Override
+    public void load(){
+        super.load();
+
+        modeRegion = Core.atlas.find(name + "-mode");
+        plugRegion0 = Core.atlas.find(name + "-plug0");
+        plugRegion1 = Core.atlas.find(name + "-plug1");
+    }
+
+    @Override
+    protected TextureRegion[] icons(){
+        return new TextureRegion[]{Core.atlas.find(name + "-preview")};
+    }
+
+    @Override
+    public TextureRegion getPlanRegion(BuildPlan plan, Eachable<BuildPlan> list){
+        return region;
+    }
+
+    @Override
     public boolean canPlaceOn(Tile tile, Team team, int rotation){
         //Assumes this block is 1x1. Too lazy to bother with anything larger because I won't make something larger.
         Tile front = tile.nearby(rotation);
         return front != null && front.build instanceof TurretBuild;
+    }
+
+    @Override
+    public void drawPlanRegion(BuildPlan plan, Eachable<BuildPlan> list){
+        super.drawPlanRegion(plan, list);
+        drawPlug(plan.x * 8f, plan.y * 8f, plan.rotation);
+    }
+
+    public void drawPlug(float x, float y, int rotation){
+        TextureRegion region = rotation > 1 ? plugRegion1 : plugRegion0;
+        float flip = rotation % 2 == 0 ? 1 : -1;
+        Draw.rect(region, x, y, region.width / 4f, flip * region.height / 4f, rotation * 90f);
     }
 
     public class TurretControllerBuild extends Building{
@@ -116,6 +154,17 @@ public class TurretController extends Block{
         }
 
         @Override
+        public void draw(){
+            super.draw();
+
+            Draw.color(controlState.modeColor);
+            Draw.rect(modeRegion, x, y);
+            Draw.color();
+            Draw.z(Layer.block + 0.01f);
+            drawPlug(x, y, rotation);
+        }
+
+        @Override
         public void drawSelect(){
             Building front = front();
             if(front instanceof TurretBuild b && b.team == team){
@@ -143,11 +192,17 @@ public class TurretController extends Block{
     }
 
     public enum ControlState{
-        off,
-        on,
-        disable;
+        off(Pal.darkerGray),
+        on(Pal.heal),
+        disable(Color.red);
+
+        public Color modeColor;
 
         public static ControlState[] all = values();
+
+        ControlState(Color modeColor){
+            this.modeColor = modeColor;
+        }
 
         public ControlState next(){
             int next = ordinal() + 1;
