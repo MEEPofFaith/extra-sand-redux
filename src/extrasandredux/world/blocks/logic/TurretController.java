@@ -113,42 +113,42 @@ public class TurretController extends Block{
                 t.table(mode -> {
                     ButtonGroup<TextButton> group = new ButtonGroup<>();
 
-                    mode.button("On", Styles.flatTogglet, () -> {
+                    mode.button("@esr-turret-controller-on", Styles.flatTogglet, () -> {
                         controlState = ControlState.on;
                         configure(1);
                     }).group(group).wrapLabel(false).grow()
                         .update(tb -> tb.setChecked(controlState == ControlState.on))
-                        .get().margin(0f, 2f, 0f, 2f);
+                        .get().margin(0f, 6f, 0f, 6f);
                     mode.row();
-                    mode.button("Off", Styles.flatTogglet, () -> {
+                    mode.button("@esr-turret-controller-off", Styles.flatTogglet, () -> {
                         controlState = ControlState.off;
                         configure(0);
                     }).group(group).wrapLabel(false).grow()
                         .update(tb -> tb.setChecked(controlState == ControlState.off))
-                        .get().margin(0f, 2f, 0f, 2f);
+                        .get().margin(0f, 6f, 0f, 6f);
                     mode.row();
-                    mode.button("Disable", Styles.flatTogglet, () -> {
+                    mode.button("@esr-turret-controller-disable", Styles.flatTogglet, () -> {
                         controlState = ControlState.disable;
                         configure(2);
                     }).group(group).wrapLabel(false).grow()
                         .update(tb -> tb.setChecked(controlState == ControlState.disable))
-                        .get().margin(0f, 2f, 0f, 2f);
+                        .get().margin(0f, 6f, 0f, 6f);
                 }).top().growY();
 
                 //Target
                 t.table(tar -> { //TODO target using a click. Command mode probably.
-                    tar.add("Angle: ");
+                    tar.add("@esr-turret-controller-angle").right();
                     tar.field("" + targetSetting.x, TextFieldFilter.floatsOnly, s -> {
                         targetSetting.x = Strings.parseFloat(s);
                         configure(targetSetting);
                     });
                     tar.row();
-                    tar.add("Distance: ");
+                    tar.add("@esr-turret-controller-distance").right();
                     tar.field("" + targetSetting.y, TextFieldFilter.floatsOnly, s -> {
                         targetSetting.y = Strings.parseFloat(s);
                         configure(targetSetting);
                     });
-                }).top().growY();
+                }).top().growY().padLeft(6f);
             });
         }
 
