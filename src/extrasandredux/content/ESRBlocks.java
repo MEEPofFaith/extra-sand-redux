@@ -178,6 +178,7 @@ public class ESRBlocks{
             size = 2;
         }};
         inputReader = new FlowrateVoid("input-reader");
+        placeableCore = new PlaceableCore("placeable-core");
 
         //Effect
         configurableMendProjector = new ConfigurableMendProjector("infini-mender");
