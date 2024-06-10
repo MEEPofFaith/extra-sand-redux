@@ -65,13 +65,6 @@ public class TurretController extends Block{
     }
 
     @Override
-    public boolean canPlaceOn(Tile tile, Team team, int rotation){
-        //Assumes this block is 1x1. Too lazy to bother with anything larger because I won't make something larger.
-        Tile front = tile.nearby(rotation);
-        return front != null && front.build instanceof TurretBuild;
-    }
-
-    @Override
     public void drawPlanRegion(BuildPlan plan, Eachable<BuildPlan> list){
         super.drawPlanRegion(plan, list);
         drawPlug(plan.x * 8f, plan.y * 8f, plan.rotation);
