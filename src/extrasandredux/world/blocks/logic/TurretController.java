@@ -96,6 +96,12 @@ public class TurretController extends Block{
                     b.control(LAccess.shoot, Tmp.v1.x, Tmp.v1.y, 1, 0);
                 }else if(controlState == ControlState.disable){
                     b.control(LAccess.enabled, 0, 0, 0, 0);
+                }else{
+                    b.control(LAccess.enabled, 1, 0, 0, 0);
+                    if(b.logicShooting){ //If was shooting, stop
+                        b.logicControlTime = 0f;
+                        b.logicShooting = false;
+                    }
                 }
             }
         }
@@ -187,7 +193,7 @@ public class TurretController extends Block{
     public enum ControlState{
         off(Pal.darkerGray),
         on(Pal.heal),
-        disable(Color.red);
+        disable(Color.valueOf("ff4545"));
 
         public Color modeColor;
 
