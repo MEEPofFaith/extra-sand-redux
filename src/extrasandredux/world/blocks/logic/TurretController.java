@@ -82,13 +82,14 @@ public class TurretController extends Block{
 
     public class TurretControllerBuild extends Building{
         public ControlState controlState = ControlState.off;
-        /** x = angle, y = distance */
+        /** x = angle (degrees), y = distance (tiles) */
         public Vec2 targetSetting = new Vec2();
+        public TextField angField, dstField;
 
         @Override
         public Vec2 getCommandPosition(){
             if(front() instanceof TurretBuild b && b.team == team){
-                tmpVec.trns(targetSetting.x, targetSetting.y).add(b);
+                tmpVec.trns(targetSetting.x, targetSetting.y * tilesize).add(b);
                 return tmpVec;
             }else{
                 return null;
@@ -98,13 +99,17 @@ public class TurretController extends Block{
         @Override
         public void onCommand(Vec2 target){
             if(front() instanceof TurretBuild b && b.team == team){
-                targetSetting.set(b.angleTo(target), b.dst(target));
+                targetSetting.set(b.angleTo(target), b.dst(target) / tilesize);
+                if(angField != null){
+                    angField.setText("" + targetSetting.x);
+                    dstField.setText("" + targetSetting.y);
+                }
             }
         }
 
         @Override
         public void created(){
-            targetSetting.set(90, 80);
+            targetSetting.set(90, 10);
         }
 
         @Override
@@ -113,7 +118,7 @@ public class TurretController extends Block{
             if(front instanceof TurretBuild b && b.team == team){
                 if(controlState == ControlState.on){
                     b.control(LAccess.enabled, 1, 0, 0, 0);
-                    Tmp.v1.trns(targetSetting.x, targetSetting.y).add(b).scl(1f / tilesize); //Logic control uses tiles instead of world units.
+                    Tmp.v1.trns(targetSetting.x, targetSetting.y * tilesize).add(b).scl(1f / tilesize);
                     b.control(LAccess.shoot, Tmp.v1.x, Tmp.v1.y, 1, 0);
                 }else if(controlState == ControlState.disable){
                     b.control(LAccess.enabled, 0, 0, 0, 0);
@@ -159,16 +164,16 @@ public class TurretController extends Block{
                 //Target
                 t.table(tar -> { //TODO target using a click. Command mode probably.
                     tar.add("@esr-turret-controller-angle").right();
-                    tar.field("" + targetSetting.x, TextFieldFilter.floatsOnly, s -> {
+                    angField = tar.field("" + targetSetting.x, TextFieldFilter.floatsOnly, s -> {
                         targetSetting.x = Strings.parseFloat(s);
                         configure(targetSetting);
-                    });
+                    }).get();
                     tar.row();
                     tar.add("@esr-turret-controller-distance").right();
-                    tar.field("" + targetSetting.y, TextFieldFilter.floatsOnly, s -> {
+                    dstField = tar.field("" + targetSetting.y, TextFieldFilter.floatsOnly, s -> {
                         targetSetting.y = Strings.parseFloat(s);
                         configure(targetSetting);
-                    });
+                    }).get();
                 }).top().growY().padLeft(6f);
             });
         }
@@ -189,7 +194,7 @@ public class TurretController extends Block{
             Building front = front();
             if(front instanceof TurretBuild b && b.team == team){
                 Lines.stroke(1, team.color);
-                Tmp.v1.trns(targetSetting.x, targetSetting.y).add(b);
+                Tmp.v1.trns(targetSetting.x, targetSetting.y * tilesize).add(b);
                 Lines.line(b.x, b.y, Tmp.v1.x, Tmp.v1.y);
                 Drawf.target(Tmp.v1.x, Tmp.v1.y, 4, team.color);
             }
