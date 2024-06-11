@@ -10,6 +10,7 @@ import arc.scene.ui.layout.*;
 import arc.util.*;
 import arc.util.io.*;
 import extrasandredux.util.*;
+import extrasandredux.world.blocks.logic.TurretController.TurretControllerBuild.*;
 import mindustry.entities.units.*;
 import mindustry.game.*;
 import mindustry.gen.*;
@@ -23,6 +24,8 @@ import mindustry.world.blocks.defense.turrets.Turret.*;
 import static mindustry.Vars.*;
 
 public class TurretController extends Block{
+    protected static Vec2 tmpVec = new Vec2();
+
     protected TextureRegion modeRegion;
     protected TextureRegion plugRegion0, plugRegion1;
 
@@ -36,6 +39,7 @@ public class TurretController extends Block{
         rotateDraw = false;
         configurable = true;
         saveConfig = false;
+        commandable = true;
 
         config(Integer.class, (TurretControllerBuild tile, Integer state) -> {
             tile.controlState = ControlState.values()[state];
@@ -80,6 +84,23 @@ public class TurretController extends Block{
         public ControlState controlState = ControlState.off;
         /** x = angle, y = distance */
         public Vec2 targetSetting = new Vec2();
+
+        @Override
+        public Vec2 getCommandPosition(){
+            if(front() instanceof TurretBuild b && b.team == team){
+                tmpVec.trns(targetSetting.x, targetSetting.y).add(b);
+                return tmpVec;
+            }else{
+                return null;
+            }
+        }
+
+        @Override
+        public void onCommand(Vec2 target){
+            if(front() instanceof TurretBuild b && b.team == team){
+                targetSetting.set(b.angleTo(target), b.dst(target));
+            }
+        }
 
         @Override
         public void created(){
