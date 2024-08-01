@@ -120,7 +120,7 @@ public class TurretController extends Block{
                     b.control(LAccess.enabled, 1, 0, 0, 0);
                     Tmp.v1.trns(targetSetting.x, targetSetting.y * tilesize).add(b).scl(1f / tilesize);
                     b.control(LAccess.shoot, Tmp.v1.x, Tmp.v1.y, 1, 0);
-                }else if(controlState == ControlState.disable){
+                }else if(controlState == ControlState.disable && !b.isControlled()){
                     b.control(LAccess.enabled, 0, 0, 0, 0);
                 }else{
                     b.control(LAccess.enabled, 1, 0, 0, 0);
