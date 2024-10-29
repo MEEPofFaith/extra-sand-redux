@@ -17,7 +17,7 @@ public class InfBuildTurret extends BuildTurret{
         super(name);
         ESRUtls.applySandboxDefaults(this, Category.effect);
         range = 3000f * tilesize;
-        targetInterval = 1;
+        targetInterval = 0; //H Y P E R S P E E D
     }
 
 
