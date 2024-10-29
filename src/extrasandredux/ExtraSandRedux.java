@@ -63,9 +63,12 @@ public class ExtraSandRedux extends Mod{
                     configurablePowerSource, configurablePowerVoid, configurableBattery, smartPowerSource,
                     configurableHeatSource,
                     boxedFlarogus, capBlock,
-                    configurableContainer, inputReader,
+                    capacityConfigurer,
+                    configurableContainer, placeableCore, inputReader,
                     multiSource, multiVoid, multiSourceVoid, multiEverythingSourceVoid,
-                    configurableMendProjector, configurableOverdriveProjector
+                    infBuildTurret,
+                    configurableMendProjector, configurableOverdriveProjector,
+                    turretController
                 );
                 //Can't use b.buildVisibility == BuildVisibility.sandboxOnly because some things, like scrap walls, are also sandbox only.
 

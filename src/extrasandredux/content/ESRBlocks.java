@@ -50,6 +50,7 @@ public class ESRBlocks{
         configurableContainer, placeableCore, inputReader,
 
         //Effect
+        infBuildTurret,
         configurableMendProjector, configurableOverdriveProjector,
 
         //Logic
@@ -181,6 +182,9 @@ public class ESRBlocks{
         placeableCore = new PlaceableCore("placeable-core");
 
         //Effect
+        infBuildTurret = new InfBuildTurret("inf-build-tower"){{
+            size = 3;
+        }};
         configurableMendProjector = new ConfigurableMendProjector("infini-mender");
         configurableOverdriveProjector = new ConfigurableOverdriveProjector("infini-overdrive");
 

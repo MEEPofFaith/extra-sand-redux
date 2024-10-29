@@ -75,7 +75,7 @@ public class PlaceableCore extends CoreBlock{
                 ib.getStyle().disabled = ib.getStyle().over;
                 ib.add("@esr-placeable-core-place").padLeft(16f);
                 t.row();
-                ItemSelection.buildTable(PlaceableCore.this, t, content.blocks().select(b -> b instanceof CoreBlock && !(b instanceof PlaceableCore)), () -> toPlace, this::configure, selectionRows, selectionColumns);
+                ItemSelection.buildTable(PlaceableCore.this, t, content.blocks().select(b -> b instanceof CoreBlock && !(b instanceof PlaceableCore)), () -> toPlace, this::configure, false, selectionRows, selectionColumns);
             });
         }
     }
