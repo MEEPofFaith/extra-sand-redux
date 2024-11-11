@@ -4,19 +4,15 @@ import arc.*;
 import arc.func.*;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
-import arc.math.*;
 import arc.scene.style.*;
 import arc.scene.ui.*;
 import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
-import blackhole.entities.effect.*;
-import blackhole.graphics.*;
 import extrasandredux.ui.*;
 import extrasandredux.util.*;
 import mindustry.core.*;
-import mindustry.entities.*;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
@@ -30,15 +26,8 @@ import mindustry.world.modules.*;
 import static mindustry.Vars.*;
 
 public class FlowrateVoid extends PayloadVoid{
-    public final int swirlTimer = timers++;
     protected static FlowrateVoidDialog flowrateVoidDialog;
     protected static float addTimeSetting;
-
-    public Effect swirlEffect = null;
-    public float swirlInterval = 2f;
-    public float warmupSpeed = 0.019f;
-    public float horizonRad = -1f, edgeRad = -1f;
-    public Interp growInterp = Interp.circleOut;
 
     public FlowrateVoid(String name){
         super(name);
@@ -72,11 +61,6 @@ public class FlowrateVoid extends PayloadVoid{
         super.init();
 
         if(!headless && flowrateVoidDialog == null) flowrateVoidDialog = new FlowrateVoidDialog();
-        if(swirlEffect == null) swirlEffect = new SwirlEffect(60f, 6, 2f, 90, 270);
-        if(horizonRad < 0) horizonRad = size * 2f / 3f;
-        if(edgeRad < 0) edgeRad = size * 12f;
-
-        clipSize = Math.max(clipSize, edgeRad * 2f);
     }
 
     @Override
@@ -116,7 +100,6 @@ public class FlowrateVoid extends PayloadVoid{
         public float readingTimer = 0f;
         public float totalTime = 0f;
         public float totalPowerProduced, totalPowerConsumed, totalPowerTransported;
-        public float warmup;
         public PayloadSeq payloads = new PayloadSeq();
         public ObjectMap<Block, PayloadInputData> payloadData = new ObjectMap<>();
 
@@ -142,14 +125,10 @@ public class FlowrateVoid extends PayloadVoid{
 
             Draw.z(Layer.blockOver);
             drawPayload();
-
-            BlackHoleRenderer.addBlackHole(x, y, horizonRad * warmup(), edgeRad * warmup(), team.color);
         }
 
         @Override
         public void updateTile(){
-            warmup = Mathf.approachDelta(warmup, 1f, warmupSpeed);
-
             if(readingTimer > 0f){
                 readingTimer -= Time.delta;
                 totalTime += Time.delta;
@@ -161,15 +140,6 @@ public class FlowrateVoid extends PayloadVoid{
             if(moveInPayload(false)){
                 consumePayload();
             }
-
-            if(timer.get(swirlTimer, swirlInterval)){
-                swirlEffect.at(x, y, edgeRad * warmup(), team.color);
-            }
-        }
-
-        @Override
-        public float warmup(){
-            return growInterp.apply(warmup);
         }
 
         public void consumePayload(){

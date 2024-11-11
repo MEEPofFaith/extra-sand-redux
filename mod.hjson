@@ -7,6 +7,5 @@
     "author": "MEEP of Faith",
     "java": true,
     "main": "extrasandredux.ExtraSandRedux",
-    "repo": "MEEPofFaith/extra-sand-redux",
-    "dependencies": ["black-hole-renderer"]
+    "repo": "MEEPofFaith/extra-sand-redux"
 }
