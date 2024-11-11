@@ -5,12 +5,12 @@ import mindustry.*;
 
 public class ESRSounds{
     public static Sound
+        flowrateAbosrb = new Sound(),
         eviscerationCharge = new Sound(),
         eviscerationBlast = new Sound();
 
     public static void load(){
-        if(Vars.headless) return;
-
+        flowrateAbosrb = Vars.tree.loadSound("flowrate-absorb");
         eviscerationCharge = Vars.tree.loadSound("evisceration-charge");
         eviscerationBlast = Vars.tree.loadSound("evisceration-blast");
     }

@@ -39,7 +39,12 @@ public class ExtraSandRedux extends Mod{
 
         // Load all assets once they're added into Vars.tree
         Events.on(FileTreeInitEvent.class, e -> {
-            app.post(ESRSounds::load);
+            if(!headless){
+                app.post(() -> {
+                    ESRSounds.load();
+                    ESRShaders.init();
+                });
+            }
         });
 
         // Check if everything turret/unit are enabled

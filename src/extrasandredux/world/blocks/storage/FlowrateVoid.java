@@ -4,16 +4,21 @@ import arc.*;
 import arc.func.*;
 import arc.graphics.*;
 import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.math.geom.*;
 import arc.scene.style.*;
 import arc.scene.ui.*;
 import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
+import extrasandredux.content.*;
+import extrasandredux.graphics.*;
 import extrasandredux.ui.*;
 import extrasandredux.util.*;
 import mindustry.core.*;
 import mindustry.game.*;
+import mindustry.game.EventType.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
@@ -26,6 +31,16 @@ import mindustry.world.modules.*;
 import static mindustry.Vars.*;
 
 public class FlowrateVoid extends PayloadVoid{
+    private static ObjectSet<FlowrateVoidBuild> spaceDraws;
+
+    public int extraAbsorbEffects = 6;
+    public float extraAbsorbOffset = 6f;
+    public float extraAbsorbEffectMinDelay = 15f, extraAbsorbEffectMaxDelay = 35f;
+    public float absorbPitch = 1f, absorbVolume = 0.2f;
+    public Color effectColor = Color.valueOf("1d053a");
+
+    protected TextureRegion baseRegion, spaceRegion;
+
     protected static FlowrateVoidDialog flowrateVoidDialog;
     protected static float addTimeSetting;
 
@@ -37,9 +52,11 @@ public class FlowrateVoid extends PayloadVoid{
         outputsPower = outputsPayload = false;
         configurable = true;
         saveConfig = false;
-        payloadSpeed = 3f;
         itemCapacity = 10000;
         liquidCapacity = 10000f;
+
+        incinerateEffect = ESRFx.flowrateAbsorb;
+        incinerateSound = ESRSounds.flowrateAbosrb;
 
         config(Float.class, (FlowrateVoidBuild build, Float time) -> {
             build.readingTimer += time * 60f;
@@ -54,6 +71,22 @@ public class FlowrateVoid extends PayloadVoid{
             build.payloads.clear();
             build.payloadData.clear();
         });
+
+        if(spaceDraws == null){
+            spaceDraws = new ObjectSet<>();
+
+            Events.run(Trigger.drawOver, () -> {
+                Draw.draw(Layer.block - 0.01f, () -> {
+                    for(FlowrateVoidBuild build : spaceDraws){
+                        renderer.effectBuffer.begin(Color.clear);
+                        Draw.rect(((FlowrateVoid)(build.block)).spaceRegion, build.x, build.y);
+                        renderer.effectBuffer.end();
+                        renderer.effectBuffer.blit(ESRShaders.ESRSpaceShader);
+                    }
+                });
+                spaceDraws.clear();
+            });
+        }
     }
 
     @Override
@@ -61,6 +94,19 @@ public class FlowrateVoid extends PayloadVoid{
         super.init();
 
         if(!headless && flowrateVoidDialog == null) flowrateVoidDialog = new FlowrateVoidDialog();
+    }
+
+    @Override
+    public void load(){
+        super.load();
+
+        baseRegion = Core.atlas.find(name + "-base");
+        spaceRegion = Core.atlas.find(name + "-space");
+    }
+
+    @Override
+    public TextureRegion[] icons(){
+        return new TextureRegion[]{baseRegion, region, topRegion};
     }
 
     @Override
@@ -96,6 +142,7 @@ public class FlowrateVoid extends PayloadVoid{
     }
 
     public class FlowrateVoidBuild extends PayloadBlockBuild<Payload>{
+        public float dst = 1f;
         public float maxTime = 1f;
         public float readingTimer = 0f;
         public float totalTime = 0f;
@@ -112,6 +159,10 @@ public class FlowrateVoid extends PayloadVoid{
 
         @Override
         public void draw(){
+            Draw.z(Layer.block - 0.02f);
+            Draw.rect(baseRegion, x, y);
+
+            Draw.z(Layer.block);
             Draw.rect(region, x, y);
 
             //draw input
@@ -124,7 +175,11 @@ public class FlowrateVoid extends PayloadVoid{
             Draw.rect(topRegion, x, y);
 
             Draw.z(Layer.blockOver);
+            Draw.scl(payVector.len() / dst);
             drawPayload();
+            Draw.reset();
+
+            spaceDraws.add(this);
         }
 
         @Override
@@ -168,8 +223,15 @@ public class FlowrateVoid extends PayloadVoid{
             }
 
             payload = null;
-            incinerateEffect.at(this);
-            incinerateSound.at(this);
+            incinerateEffect.at(x, y, effectColor);
+            incinerateSound.at(x, y, absorbPitch, absorbVolume);
+
+            for(int i = 0; i < extraAbsorbEffects; i++){
+                Time.run(Mathf.random(extraAbsorbEffectMinDelay, extraAbsorbEffectMaxDelay), () -> {
+                    Vec2 pos = ESRUtls.randomPoint(extraAbsorbOffset);
+                    incinerateEffect.at(x + pos.x, y + pos.y, effectColor);
+                });
+            }
         }
 
         @Override
@@ -268,6 +330,12 @@ public class FlowrateVoid extends PayloadVoid{
         public void handleLiquid(Building source, Liquid liquid, float amount){
             if(readingTimer <= 0) return;
             super.handleLiquid(source, liquid, amount);
+        }
+
+        @Override
+        public void handlePayload(Building source, Payload payload){
+            super.handlePayload(source, payload);
+            dst = payVector.len();
         }
 
         public class PayloadInputData{

@@ -1,5 +1,7 @@
 package extrasandredux.util;
 
+import arc.math.*;
+import arc.math.geom.*;
 import arc.util.*;
 import mindustry.*;
 import mindustry.core.*;
@@ -14,6 +16,11 @@ public class ESRUtls{
         block.requirements(category, BuildVisibility.sandboxOnly, ItemStack.empty);
         block.alwaysUnlocked = true;
         block.envEnabled = Env.any;
+    }
+
+    public static Vec2 randomPoint(float radius){
+        float r = radius * Mathf.sqrt(Mathf.random());
+        return Tmp.v1.setToRandomDirection().setLength(r);
     }
 
     public static String statUnitName(StatUnit statUnit){

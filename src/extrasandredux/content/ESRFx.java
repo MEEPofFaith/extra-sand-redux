@@ -20,6 +20,11 @@ public class ESRFx{
             Fill.square(e.x, e.y, e.rotation * tilesize / 2f);
         }).followParent(true).layer(Layer.blockOver + 0.05f),
 
+        flowrateAbsorb = new Effect(60f, e -> {
+            Lines.stroke(e.fout(), e.color);
+            Lines.circle(e.x, e.y, 2f * e.fin(Interp.pow3Out));
+        }).layer(Layer.block - 0.005f),
+
         eviscerationCharge = new Effect(150f, 1600f, e -> {
             Color[] colors = {Color.valueOf("D99F6B55"), Color.valueOf("E8D174aa"), Color.valueOf("F3E979"), Color.valueOf("ffffff")};
             float[] tscales = {1f, 0.7f, 0.5f, 0.2f};
