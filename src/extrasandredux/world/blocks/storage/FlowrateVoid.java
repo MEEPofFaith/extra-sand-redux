@@ -17,8 +17,8 @@ import extrasandredux.graphics.*;
 import extrasandredux.ui.*;
 import extrasandredux.util.*;
 import mindustry.core.*;
-import mindustry.game.*;
 import mindustry.game.EventType.*;
+import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
@@ -37,6 +37,7 @@ public class FlowrateVoid extends PayloadVoid{
     public float extraAbsorbOffset = 6f;
     public float extraAbsorbEffectMinDelay = 15f, extraAbsorbEffectMaxDelay = 35f;
     public float absorbPitch = 1f, absorbVolume = 0.2f;
+    public float sclMax = 20f;
     public Color effectColor = Color.valueOf("1d053a");
 
     protected TextureRegion baseRegion, spaceRegion;
@@ -222,16 +223,19 @@ public class FlowrateVoid extends PayloadVoid{
                 payloads.add(payload.content());
             }
 
-            payload = null;
             incinerateEffect.at(x, y, effectColor);
             incinerateSound.at(x, y, absorbPitch, absorbVolume);
 
-            for(int i = 0; i < extraAbsorbEffects; i++){
+            float scl = Mathf.clamp(payload.size() / sclMax);
+            int count = (int)(extraAbsorbEffects * scl * scl);
+            for(int i = 0; i < count; i++){
                 Time.run(Mathf.random(extraAbsorbEffectMinDelay, extraAbsorbEffectMaxDelay), () -> {
-                    Vec2 pos = ESRUtls.randomPoint(extraAbsorbOffset);
+                    Vec2 pos = ESRUtls.randomPoint(extraAbsorbOffset * scl);
                     incinerateEffect.at(x + pos.x, y + pos.y, effectColor);
                 });
             }
+
+            payload = null;
         }
 
         @Override
