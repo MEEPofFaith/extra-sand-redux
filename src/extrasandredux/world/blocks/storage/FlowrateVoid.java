@@ -69,7 +69,7 @@ public class FlowrateVoid extends PayloadVoid{
             build.items.clear();
             build.liquids.clear();
             build.totalPowerProduced = build.totalPowerConsumed = 0f;
-            build.payloads.clear();
+            build.totalPayloads.clear();
             build.payloadData.clear();
         });
 
@@ -142,13 +142,13 @@ public class FlowrateVoid extends PayloadVoid{
         ));
     }
 
-    public class FlowrateVoidBuild extends PayloadBlockBuild<Payload>{
-        public float dst = 1f;
+    public class FlowrateVoidBuild extends Building{
+        public Seq<Payload> payloads = new Seq<>();
         public float maxTime = 1f;
         public float readingTimer = 0f;
         public float totalTime = 0f;
         public float totalPowerProduced, totalPowerConsumed, totalPowerTransported;
-        public PayloadSeq payloads = new PayloadSeq();
+        public PayloadSeq totalPayloads = new PayloadSeq();
         public ObjectMap<Block, PayloadInputData> payloadData = new ObjectMap<>();
 
         @Override
@@ -175,10 +175,13 @@ public class FlowrateVoid extends PayloadVoid{
 
             Draw.rect(topRegion, x, y);
 
-            Draw.z(Layer.blockOver);
-            Draw.scl(payVector.len() / dst);
-            drawPayload();
-            Draw.reset();
+            if(payloads.any()){
+                payloads.each(p -> {
+                    Draw.z(Layer.blockOver);
+                    p.draw();
+                });
+                Draw.reset();
+            }
 
             spaceDraws.add(this);
         }
@@ -193,12 +196,19 @@ public class FlowrateVoid extends PayloadVoid{
                 if(flowrateVoidDialog != null && flowrateVoidDialog.isShown()) flowrateVoidDialog.rebuild();
             }
 
-            if(moveInPayload(false)){
-                consumePayload();
+            for(int i = 0; i < payloads.size; i++){
+                Payload p = payloads.get(i);
+                Tmp.v1.set(p).approach(self(), payloadSpeed);
+                p.set(Tmp.v1.x, Tmp.v1.y, p.rotation());
+
+                if(Tmp.v1.within(self(), 0.01f)){
+                    consumePayload(p);
+                    payloads.remove(i);
+                }
             }
         }
 
-        public void consumePayload(){
+        public void consumePayload(Payload payload){
             if(readingTimer > 0f){
                 if(payload instanceof BuildPayload p){
                     PayloadInputData data = payloadData.get(p.block(), PayloadInputData::new);
@@ -220,7 +230,7 @@ public class FlowrateVoid extends PayloadVoid{
                         data.addP(pow);
                     }
                 }
-                payloads.add(payload.content());
+                totalPayloads.add(payload.content());
             }
 
             incinerateEffect.at(x, y, effectColor);
@@ -234,8 +244,6 @@ public class FlowrateVoid extends PayloadVoid{
                     incinerateEffect.at(x + pos.x, y + pos.y, effectColor);
                 });
             }
-
-            payload = null;
         }
 
         @Override
@@ -260,18 +268,10 @@ public class FlowrateVoid extends PayloadVoid{
             });
         }
 
-        public float getTotalSeconds(){
-            return totalTime / 60f;
-        }
-
         public float getTotalLiquids(){
             float[] total = {0f};
             liquids.each((liquid, amount) -> total[0] += amount);
             return total[0];
-        }
-
-        public float barFill(){
-            return totalTime > 0f ? 1f : 0f;
         }
 
         @Override
@@ -288,7 +288,7 @@ public class FlowrateVoid extends PayloadVoid{
                 t.label(() -> labelText(getTotalLiquids())).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
 
                 t.image(new TextureRegionDrawable(Icon.units)).size(32).scaling(Scaling.fit);
-                t.label(() -> labelText(payloads.total())).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
+                t.label(() -> labelText(totalPayloads.total())).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
 
                 t.image(new TextureRegionDrawable(Icon.power)).size(32).scaling(Scaling.fit).color(Pal.accent);
                 t.label(() -> labelText(totalPowerProduced)).wrap().width(230f).padLeft(2).color(Color.lightGray).row();
@@ -337,12 +337,16 @@ public class FlowrateVoid extends PayloadVoid{
         }
 
         @Override
-        public void handlePayload(Building source, Payload payload){
-            super.handlePayload(source, payload);
-            dst = payVector.len();
+        public boolean acceptPayload(Building source, Payload payload){
+            return true;
         }
 
-        public class PayloadInputData{
+        @Override
+        public void handlePayload(Building source, Payload payload){
+            payloads.add(payload);
+        }
+
+        public static class PayloadInputData{
             public int[] items = new int[content.items().size];
             public float[] liquids = new float[content.liquids().size];
             public float power;

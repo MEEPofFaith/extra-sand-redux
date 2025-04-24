@@ -154,17 +154,17 @@ public class FlowrateVoidDialog extends BaseDialog{
     }
 
     private void buildPayloads(){
-        if(!build.payloads.any()) return;
+        if(!build.totalPayloads.any()) return;
 
         ESRElements.divider(info, "@esr-flowrate-reader.payloads", Pal.accent);
         info.table(payloads -> {
             payloads.table(t -> {
-                t.add(bundle.format("esr-flowrate-reader.total", build.payloads.total())).left();
-                t.add(perSec(build.payloads.total())).padLeft(24);
+                t.add(bundle.format("esr-flowrate-reader.total", build.totalPayloads.total())).left();
+                t.add(perSec(build.totalPayloads.total())).padLeft(24);
             }).colspan(cols).left().row();
 
             col = 0;
-            ObjectIntMap<UnlockableContent> payloadMap = Reflect.get(build.payloads, "payloads");
+            ObjectIntMap<UnlockableContent> payloadMap = Reflect.get(build.totalPayloads, "payloads");
             Seq<UnlockableContent> keys = payloadMap.keys().toArray();
             keys.sort((u1, u2) -> {
                 if(u1.getContentType() == u2.getContentType()){
