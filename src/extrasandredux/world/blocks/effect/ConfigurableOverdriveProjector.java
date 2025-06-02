@@ -132,8 +132,13 @@ public class ConfigurableOverdriveProjector extends OverdriveProjector{
                 indexer.eachBlock(this, setRange, other -> other.block.canOverdrive, other -> other.applyBoost(realBoost(), reload + 1f));
             }
 
-            if(timer(timerUse, useTime) && efficiency > 0){
+            if(efficiency > 0){
+                useProgress += delta();
+            }
+
+            if(useProgress >= useTime){
                 consume();
+                useProgress %= useTime;
             }
         }
 

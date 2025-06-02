@@ -168,7 +168,7 @@ public class FlowrateVoid extends PayloadVoid{
 
             //draw input
             for(int i = 0; i < 4; i++){
-                if(blends(i)){
+                if(blends(this, rotation)){
                     Draw.rect(inRegion, x, y, (i * 90) - 180);
                 }
             }
@@ -345,54 +345,54 @@ public class FlowrateVoid extends PayloadVoid{
         public void handlePayload(Building source, Payload payload){
             payloads.add(payload);
         }
+    }
 
-        public static class PayloadInputData{
-            public int[] items = new int[content.items().size];
-            public float[] liquids = new float[content.liquids().size];
-            public float power;
+    public static class PayloadInputData{
+        public int[] items = new int[content.items().size];
+        public float[] liquids = new float[content.liquids().size];
+        public float power;
 
-            public void addI(Item item, int amount){
-                items[item.id] += amount;
+        public void addI(Item item, int amount){
+            items[item.id] += amount;
+        }
+
+        public void addL(Liquid liquid, float amount){
+            liquids[liquid.id] += amount;
+        }
+
+        public void addP(float amount){
+            power += amount;
+        }
+
+        public boolean hasItems(){
+            for(int i : items){
+                if(i > 0) return true;
             }
+            return false;
+        }
 
-            public void addL(Liquid liquid, float amount){
-                liquids[liquid.id] += amount;
+        public boolean hasLiquids(){
+            for(float l : liquids){
+                if(l > 0) return true;
             }
+            return false;
+        }
 
-            public void addP(float amount){
-                power += amount;
+        public boolean hasPower(){
+            return power > 0;
+        }
+
+        public void eachItem(Cons2<Item, Integer> cons){
+            for(int i = 0; i < items.length; i++){
+                if(items[i] == 0) continue;
+                cons.get(content.item(i), items[i]);
             }
+        }
 
-            public boolean hasItems(){
-                for(int i : items){
-                    if(i > 0) return true;
-                }
-                return false;
-            }
-
-            public boolean hasLiquids(){
-                for(float l : liquids){
-                    if(l > 0) return true;
-                }
-                return false;
-            }
-
-            public boolean hasPower(){
-                return power > 0;
-            }
-
-            public void eachItem(Cons2<Item, Integer> cons){
-                for(int i = 0; i < items.length; i++){
-                    if(items[i] == 0) continue;
-                    cons.get(content.item(i), items[i]);
-                }
-            }
-
-            public void eachLiquid(Cons2<Liquid, Float> cons){
-                for(int i = 0; i < liquids.length; i++){
-                    if(liquids[i] == 0) continue;
-                    cons.get(content.liquid(i), liquids[i]);
-                }
+        public void eachLiquid(Cons2<Liquid, Float> cons){
+            for(int i = 0; i < liquids.length; i++){
+                if(liquids[i] == 0) continue;
+                cons.get(content.liquid(i), liquids[i]);
             }
         }
     }
