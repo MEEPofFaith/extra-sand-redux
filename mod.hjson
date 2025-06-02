@@ -2,7 +2,7 @@
     "displayName": "Extra Sand in the Sandbox - Redux",
     "subtitle": "It returns",
     "description": "A plethora of sandbox-only blocks dedicated for both fun and testing purposes.\n\n[red]REQUIRES `MEEPofFaith/black-hole-renderer` TO RUN. THE GAME WILL CRASH WITHOUT IT INSTALLED.[]",
-    "version": 3.0,
+    "version": 3.1,
     "minGameVersion": 149,
     "author": "MEEP of Faith",
     "java": true,
