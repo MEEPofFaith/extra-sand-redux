@@ -36,7 +36,7 @@ public class FlowrateVoid extends PayloadVoid{
     public int extraAbsorbEffects = 6;
     public float extraAbsorbOffset = 6f;
     public float extraAbsorbEffectMinDelay = 15f, extraAbsorbEffectMaxDelay = 35f;
-    public float absorbPitch = 1f, absorbVolume = 0.2f;
+    public float absorbPitch = 1f, absorbVolume = 0.5f;
     public float sclMax = 20f;
     public Color effectColor = Color.valueOf("1d053a");
 
@@ -198,10 +198,10 @@ public class FlowrateVoid extends PayloadVoid{
 
             for(int i = 0; i < payloads.size; i++){
                 Payload p = payloads.get(i);
-                Tmp.v1.set(p).approach(self(), payloadSpeed);
-                p.set(Tmp.v1.x, Tmp.v1.y, p.rotation());
+                Tmp.v2.set(p).approach(Tmp.v1.set(this), payloadSpeed);
+                p.set(Tmp.v2.x, Tmp.v2.y, p.rotation());
 
-                if(Tmp.v1.within(self(), 0.01f)){
+                if(p.within(self(), 0.01f)){
                     consumePayload(p);
                     payloads.remove(i);
                 }

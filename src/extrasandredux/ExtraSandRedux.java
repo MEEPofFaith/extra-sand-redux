@@ -155,7 +155,7 @@ public class ExtraSandRedux extends Mod{
     }
 
     public static boolean checkKillShooter(BulletType b){
-        if(b == null || b == Bullets.damageLightning || b == Bullets.damageLightningGround) return false;
+        if(b == null || b == Bullets.damageLightning || b == Bullets.damageLightningGround || b == Bullets.damageLightningAir) return false;
         return b.killShooter ||
             checkKillShooter(b.fragBullet) ||
             checkKillShooter(b.intervalBullet) ||
