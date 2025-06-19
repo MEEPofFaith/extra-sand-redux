@@ -25,8 +25,6 @@ import static mindustry.Vars.*;
 
 public class TargetDummyBase extends Block{
     public final int DPSUpdateTime = timers++;
-
-    public float resetTime = 120f;
     public UnitType unitType = ESRUnitTypes.targetDummy;
     public float pullScale = 0.33f;
     public TextureRegion tether, tetherEnd;
@@ -72,7 +70,7 @@ public class TargetDummyBase extends Block{
         addBar("esr-dps", (TargetDummyBaseBuild entity) -> new Bar(
             () -> entity.displayDPS(false),
             () -> Pal.ammo,
-            () -> 1f - (entity.reset / resetTime)
+            () -> 1f - (entity.reset / entity.resetTime)
         ));
     }
 
@@ -87,6 +85,7 @@ public class TargetDummyBase extends Block{
         //needs to be "unboxed" after reading, since units are read after buildings.
         public int readUnitId = -1;
         public Unit unit;
+        public float resetTime = 120f;
         public float total, reset = resetTime, time, DPS;
         public boolean boosting;
         public float unitArmor;
@@ -243,6 +242,7 @@ public class TargetDummyBase extends Block{
             write.i(unit == null ? -1 : unit.id);
             write.bool(boosting);
             write.f(unitArmor);
+            write.f(resetTime);
         }
 
         @Override
@@ -252,6 +252,15 @@ public class TargetDummyBase extends Block{
             readUnitId = read.i();
             boosting = read.bool();
             unitArmor = read.f();
+
+            if(revision >= 1){
+                resetTime = read.f();
+            }
+        }
+
+        @Override
+        public byte version(){
+            return 1;
         }
     }
 }
