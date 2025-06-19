@@ -3,6 +3,7 @@ package extrasandredux.world.blocks.defence;
 import arc.*;
 import arc.graphics.g2d.*;
 import arc.math.*;
+import arc.math.geom.*;
 import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
 import arc.util.*;
@@ -20,6 +21,7 @@ import mindustry.type.*;
 import mindustry.ui.*;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
+import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
 
@@ -40,7 +42,10 @@ public class TargetDummyBase extends Block{
 
         config(Boolean.class, (TargetDummyBaseBuild tile, Boolean b) -> tile.boosting = b);
         config(Integer.class, (TargetDummyBaseBuild tile, Integer i) -> tile.unitTeam = Team.get(i));
-        config(Float.class, (TargetDummyBaseBuild tile, Float f) -> tile.unitArmor = f);
+        config(Vec2.class, (TargetDummyBaseBuild tile, Vec2 v) -> {
+            tile.unitArmor = v.x;
+            tile.resetTime = v.y;
+        });
         config(int[].class, (TargetDummyBaseBuild tile, int[] config) -> {
             tile.unitTeam = tile.team; //set default to config off of
             if(config[0] == 1) tile.unitTeam = Team.get(tile.dummyTeam());
@@ -210,14 +215,16 @@ public class TargetDummyBase extends Block{
                 t.background(Styles.black6);
                 t.defaults().left();
 
-                t.check("@esr-target-dummy.enemy", unitTeam != team, b -> configure(dummyTeam()));
+                t.check("@esr-target-dummy.enemy", unitTeam != team, b -> configure(dummyTeam())).colspan(3);
                 t.row();
-                t.check("@stat.flying", boosting, this::configure);
+                t.check("@stat.flying", boosting, this::configure).colspan(3);
                 t.row();
-                t.table(a -> {
-                    a.add(Core.bundle.get("stat.armor") + ":");
-                    a.field("" + unitArmor, TextFieldFilter.floatsOnly, s -> configure(Strings.parseFloat(s))).width(200f).padLeft(8f);
-                });
+                t.add(Core.bundle.get("stat.armor") + ":");
+                t.field("" + unitArmor, TextFieldFilter.floatsOnly, s -> configure(Tmp.v1.set(Strings.parseFloat(s), resetTime))).width(200f).padLeft(8f).colspan(2);
+                t.row();
+                t.add("@esr-target-dummy.reset");
+                t.field("" + Strings.autoFixed(resetTime / 60f, 2), TextFieldFilter.floatsOnly, s -> configure(Tmp.v1.set(unitArmor, Strings.parseFloat(s) * 60f))).padLeft(8f).growX();
+                t.add(StatUnit.seconds.localized()).padLeft(8);
             }).top().grow().margin(8f);
         }
 
