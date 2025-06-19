@@ -91,7 +91,10 @@ public class TargetDummyBase extends Block{
         public int readUnitId = -1;
         public Unit unit;
         public float resetTime = 120f;
-        public float total, reset = resetTime, time, DPS;
+        public float total, reset = resetTime, time;
+        public float DPS, totalDisplay, timeDisplay;
+        public int hits;
+        public int hitsDisplay;
         public boolean boosting;
         public float unitArmor;
         public Team unitTeam;
@@ -143,12 +146,18 @@ public class TargetDummyBase extends Block{
             time += Time.delta;
             reset += Time.delta;
 
-            if(timer(DPSUpdateTime, 20)) DPS = total / time * 60f;
+            if(timer(DPSUpdateTime, 20)){
+                DPS = total / time * 60f;
+                totalDisplay = total;
+                timeDisplay = time / 60f;
+                hitsDisplay = hits;
+            }
 
             if(reset >= resetTime){
                 total = 0f;
                 time = 0f;
                 DPS = 0f;
+                hits = 0;
             }
         }
 
@@ -172,15 +181,31 @@ public class TargetDummyBase extends Block{
             }
 
             Draw.z(Layer.overlayUI);
-            String text = displayDPS(true);
-            ESRDrawf.text(x, y, false, size * tilesize, team.color, text);
+            String text = displayDPS(true) + "\n" + displayTotal() + "\n" + displayHits();
+            ESRDrawf.text(x, y, false, size * tilesize * 2f, team.color, text);
         }
 
         public String displayDPS(boolean round){
             if(time > 0){
-                return (round ? (DPS > 0 ? ESRUtls.round(DPS) : "---") : Strings.autoFixed(total / time * 60f, 2)) + " DPS";
+                return Core.bundle.format("esr-target-dummy.dps", (round ? (DPS > 0 ? ESRUtls.round(DPS) : "---") : Strings.autoFixed(total / time * 60f, 2)));
             }else{
-                return "--- DPS";
+                return Core.bundle.format("esr-target-dummy.dps", "---");
+            }
+        }
+
+        public String displayTotal(){
+            if(time > 0){
+                return Core.bundle.format("esr-target-dummy.total", ESRUtls.round(totalDisplay), Strings.autoFixed(timeDisplay, 2));
+            }else{
+                return Core.bundle.format("esr-target-dummy.total", "---", "---");
+            }
+        }
+
+        public String displayHits(){
+            if(time > 0){
+                return Core.bundle.format("esr-target-dummy.hits", hitsDisplay);
+            }else{
+                return Core.bundle.format("esr-target-dummy.hits", "---");
             }
         }
 
@@ -196,7 +221,8 @@ public class TargetDummyBase extends Block{
 
         public void dummyHit(float damage){
             reset = 0f;
-            total += damage ;
+            total += damage;
+            hits++;
         }
 
         @Override
@@ -223,7 +249,7 @@ public class TargetDummyBase extends Block{
                 t.field("" + unitArmor, TextFieldFilter.floatsOnly, s -> configure(Tmp.v1.set(Strings.parseFloat(s), resetTime))).width(200f).padLeft(8f).colspan(2);
                 t.row();
                 t.add("@esr-target-dummy.reset");
-                t.field("" + Strings.autoFixed(resetTime / 60f, 2), TextFieldFilter.floatsOnly, s -> configure(Tmp.v1.set(unitArmor, Strings.parseFloat(s) * 60f))).padLeft(8f).growX();
+                t.field(Strings.autoFixed(resetTime / 60f, 2), TextFieldFilter.floatsOnly, s -> configure(Tmp.v1.set(unitArmor, Strings.parseFloat(s) * 60f))).padLeft(8f).growX();
                 t.add(StatUnit.seconds.localized()).padLeft(8);
             }).top().grow().margin(8f);
         }
