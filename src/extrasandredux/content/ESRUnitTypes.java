@@ -26,7 +26,7 @@ public class ESRUnitTypes{
         targetDummy = EntityRegistry.content("dummy", TargetDummyUnit.class, name -> new DummyUnitType(name){{
             drag = 0.33f;
             hideDetails = false;
-            hitSize = 52f / 4f;
+            hitSize = 13f;
             engineOffset = 7f;
             engineSize = 2f;
             for(int i = 0; i < 3; i++){

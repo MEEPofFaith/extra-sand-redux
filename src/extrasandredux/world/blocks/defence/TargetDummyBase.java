@@ -46,6 +46,7 @@ public class TargetDummyBase extends Block{
             tile.unitArmor = v.x;
             tile.resetTime = v.y;
         });
+        config(Float.class, (TargetDummyBaseBuild tile, Float f) -> tile.dummySize = f);
         config(int[].class, (TargetDummyBaseBuild tile, int[] config) -> {
             tile.unitTeam = tile.team; //set default to config off of
             if(config[0] == 1) tile.unitTeam = Team.get(tile.dummyTeam());
@@ -91,7 +92,7 @@ public class TargetDummyBase extends Block{
         public int readUnitId = -1;
         public Unit unit;
         public float resetTime = 120f;
-        public float total, reset = resetTime, time;
+        public float total, reset = resetTime, time, dummySize = 12f;
         public float DPS, totalDisplay, timeDisplay;
         public int hits;
         public int hitsDisplay;
@@ -132,6 +133,7 @@ public class TargetDummyBase extends Block{
                 unit.updateBoosting(boosting);
                 unit.armor(unitArmor);
                 unit.team(unitTeam);
+                unit.hitSize = dummySize;
 
                 //similar to impulseNet but does not factor in mass
                 Tmp.v1.set(this).sub(unit).limit(dst(unit) * pullScale * Time.delta);
@@ -183,6 +185,11 @@ public class TargetDummyBase extends Block{
             Draw.z(Layer.overlayUI);
             String text = displayDPS(true) + "\n" + displayTotal() + "\n" + displayHits();
             ESRDrawf.text(x, y, false, size * tilesize * 2f, team.color, text);
+        }
+
+        @Override
+        public void drawSelect(){
+            Drawf.square(x, y, dummySize, 0f, team.color);
         }
 
         public String displayDPS(boolean round){
@@ -251,6 +258,10 @@ public class TargetDummyBase extends Block{
                 t.add("@esr-target-dummy.reset");
                 t.field(Strings.autoFixed(resetTime / 60f, 2), TextFieldFilter.floatsOnly, s -> configure(Tmp.v1.set(unitArmor, Strings.parseFloat(s) * 60f))).padLeft(8f).growX();
                 t.add(StatUnit.seconds.localized()).padLeft(8);
+                t.row();
+                t.add("@esr-target-dummy.size");
+                t.field("" + dummySize, TextFieldFilter.floatsOnly, s -> configure(Strings.parseFloat(s))).padLeft(8f).growX();
+                t.add("@esr-target-dummy.wu").padLeft(8);
             }).top().grow().margin(8f);
         }
 
@@ -276,6 +287,7 @@ public class TargetDummyBase extends Block{
             write.bool(boosting);
             write.f(unitArmor);
             write.f(resetTime);
+            write.f(dummySize);
         }
 
         @Override
@@ -288,6 +300,7 @@ public class TargetDummyBase extends Block{
 
             if(revision >= 1){
                 resetTime = read.f();
+                dummySize = read.f();
             }
         }
 
