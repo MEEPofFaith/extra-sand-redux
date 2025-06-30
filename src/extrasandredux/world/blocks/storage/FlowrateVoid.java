@@ -93,8 +93,15 @@ public class FlowrateVoid extends PayloadVoid{
     @Override
     public void init(){
         super.init();
-
-        if(!headless && flowrateVoidDialog == null) flowrateVoidDialog = new FlowrateVoidDialog();
+        if(!headless){
+            Events.on(ClientLoadEvent.class, e -> {
+                if(flowrateVoidDialog == null){
+                    flowrateVoidDialog = new FlowrateVoidDialog();
+                }
+            });
+        }
+        // this will crash linux for loading too early
+        //if(!headless && flowrateVoidDialog == null) flowrateVoidDialog = new FlowrateVoidDialog();
     }
 
     @Override
