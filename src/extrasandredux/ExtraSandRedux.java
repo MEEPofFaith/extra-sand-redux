@@ -8,6 +8,7 @@ import arc.util.*;
 import extrasandredux.content.*;
 import extrasandredux.gen.entities.*;
 import extrasandredux.graphics.*;
+import extrasandredux.ui.*;
 import extrasandredux.util.*;
 import extrasandredux.world.blocks.defence.turret.*;
 import mindustry.content.*;
@@ -30,6 +31,8 @@ public class ExtraSandRedux extends Mod{
     public static Seq<BulletData> allBullets = new Seq<>();
     public static int sandboxBlockHealthMultiplier = 1000000;
     public static boolean everything = false;
+
+    public static FlowrateVoidDialog flowrateVoidDialog;
 
     public ExtraSandRedux(){
         Events.on(ClientLoadEvent.class, e -> {
@@ -91,6 +94,8 @@ public class ExtraSandRedux extends Mod{
 
                 esr.meta.description = getModBundle.get("description");
                 esr.meta.subtitle = getModBundle.get("subtitle");
+
+                flowrateVoidDialog = new FlowrateVoidDialog();
             }
 
             if(everything){

@@ -12,6 +12,7 @@ import arc.scene.ui.TextField.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.util.*;
+import extrasandredux.*;
 import extrasandredux.content.*;
 import extrasandredux.graphics.*;
 import extrasandredux.ui.*;
@@ -42,7 +43,6 @@ public class FlowrateVoid extends PayloadVoid{
 
     protected TextureRegion baseRegion, spaceRegion;
 
-    protected static FlowrateVoidDialog flowrateVoidDialog;
     protected static float addTimeSetting;
 
     public FlowrateVoid(String name){
@@ -88,20 +88,6 @@ public class FlowrateVoid extends PayloadVoid{
                 spaceDraws.clear();
             });
         }
-    }
-
-    @Override
-    public void init(){
-        super.init();
-        if(!headless){
-            Events.on(ClientLoadEvent.class, e -> {
-                if(flowrateVoidDialog == null){
-                    flowrateVoidDialog = new FlowrateVoidDialog();
-                }
-            });
-        }
-        // this will crash linux for loading too early
-        //if(!headless && flowrateVoidDialog == null) flowrateVoidDialog = new FlowrateVoidDialog();
     }
 
     @Override
@@ -200,7 +186,7 @@ public class FlowrateVoid extends PayloadVoid{
                 totalTime += Time.delta;
                 totalPowerProduced += power.graph.getPowerProduced();
                 totalPowerConsumed += power.graph.getPowerNeeded();
-                if(flowrateVoidDialog != null && flowrateVoidDialog.isShown()) flowrateVoidDialog.rebuild();
+                if(ExtraSandRedux.flowrateVoidDialog.isShown()) ExtraSandRedux.flowrateVoidDialog.rebuild();
             }
 
             for(int i = 0; i < payloads.size; i++){
@@ -270,7 +256,7 @@ public class FlowrateVoid extends PayloadVoid{
                     addTimeSetting = 0f;
                     f.setText(String.valueOf(addTimeSetting));
                 }).padLeft(6f);
-                t.button(Icon.zoom, () -> flowrateVoidDialog.show(this));
+                t.button(Icon.zoom, () -> ExtraSandRedux.flowrateVoidDialog.show(this));
                 t.button(Icon.refresh, () -> configure(false)).tooltip("@esr-flowrate-reader.reset");
             });
         }
