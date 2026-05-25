@@ -2,7 +2,7 @@
     "displayName": "Extra Sand in the Sandbox - Redux",
     "subtitle": "It returns",
     "description": "A plethora of sandbox-only blocks dedicated for both fun and testing purposes.",
-    "version": 3.4,
+    "version": 3.5,
     "minGameVersion": 158.1,
     "author": "MEEP of Faith",
     "java": true,
